@@ -115,35 +115,24 @@
 				<div>
 					<h3 class="text-lg font-semibold text-gray-900">全レポート一括出力</h3>
 					<p class="text-sm text-gray-600 mt-1">
-						組織全体レポートと全部署のレポートを別タブで一括表示します
+						この機能は現在準備中です
 					</p>
 				</div>
 				<button
-					on:click={generateAllPDFs}
-					disabled={isGeneratingPDF}
-					class="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+					disabled
+					class="px-6 py-3 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed flex items-center space-x-2"
 				>
-					{#if isGeneratingPDF}
-						<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-						<span>処理中...</span>
-					{:else}
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-							/>
-						</svg>
-						<span>一括出力</span>
-					{/if}
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+						/>
+					</svg>
+					<span>準備中</span>
 				</button>
 			</div>
-			{#if downloadProgress}
-				<div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
-					<p class="text-sm text-gray-700">{downloadProgress}</p>
-				</div>
-			{/if}
 		</div>
 
 		<!-- データサマリー -->
