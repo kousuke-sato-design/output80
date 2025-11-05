@@ -2,11 +2,26 @@
 	import { parseCSV, validateCSVData } from '$lib/utils/csvParser';
 	import { userData } from '$lib/stores/dataStore';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let isDragging = false;
 	let isLoading = false;
 	let error: string | null = null;
 	let successMessage: string | null = null;
+
+	// サンプルアップロードイベントリスナー
+	onMount(() => {
+		const handleSampleUpload = (event: CustomEvent) => {
+			const file = event.detail as File;
+			handleFile(file);
+		};
+
+		window.addEventListener('sample-upload', handleSampleUpload as EventListener);
+
+		return () => {
+			window.removeEventListener('sample-upload', handleSampleUpload as EventListener);
+		};
+	});
 
 	async function handleFile(file: File) {
 		if (!file.name.endsWith('.csv')) {
@@ -38,11 +53,6 @@
 			// ストアにデータを保存
 			userData.set(result.data);
 			successMessage = `${result.data.length}件のデータを読み込みました`;
-
-			// 少し待ってからプレビューページへ遷移
-			setTimeout(() => {
-				goto('/preview');
-			}, 1000);
 		} catch (err) {
 			error = err instanceof Error ? err.message : '予期しないエラーが発生しました';
 		} finally {
@@ -168,19 +178,31 @@
 
 	<!-- 成功メッセージ -->
 	{#if successMessage}
-		<div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-			<div class="flex items-start">
-				<svg class="w-5 h-5 text-green-500 mt-0.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-					<path
-						fill-rule="evenodd"
-						d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-						clip-rule="evenodd"
-					/>
-				</svg>
-				<div class="flex-1">
-					<h3 class="text-sm font-medium text-green-800">成功</h3>
-					<p class="text-sm text-green-700 mt-1">{successMessage}</p>
+		<div class="mt-4 p-6 bg-green-50 border border-green-200 rounded-lg">
+			<div class="flex flex-col items-center space-y-4">
+				<div class="flex items-center">
+					<svg
+						class="w-12 h-12 text-green-500 mr-3"
+						fill="currentColor"
+						viewBox="0 0 20 20"
+					>
+						<path
+							fill-rule="evenodd"
+							d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+							clip-rule="evenodd"
+						/>
+					</svg>
+					<div>
+						<h3 class="text-lg font-bold text-green-800">アップロード成功</h3>
+						<p class="text-sm text-green-700 mt-1">{successMessage}</p>
+					</div>
 				</div>
+				<button
+					on:click={() => goto('/preview')}
+					class="px-8 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-md"
+				>
+					集団分析を確認する
+				</button>
 			</div>
 		</div>
 	{/if}

@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { userData, departments, departmentData } from '$lib/stores/dataStore';
 	import { goto } from '$app/navigation';
+	import JSZip from 'jszip';
 
 	$: hasData = $userData.length > 0;
 	$: departmentList = $departments;
+
+	let isGeneratingPDF = false;
+	let downloadProgress = '';
 
 	function getDepartmentUserCount(dept: string): number {
 		return $departmentData.get(dept)?.length || 0;
@@ -19,6 +23,43 @@
 
 	function viewOrganizationReport() {
 		goto('/report/organization');
+	}
+
+	async function generateAllPDFs() {
+		isGeneratingPDF = true;
+		downloadProgress = '準備中...';
+
+		try {
+			const zip = new JSZip();
+
+			// 組織全体レポートのPDFを生成
+			downloadProgress = '組織全体レポートを生成中...';
+			const orgWindow = window.open('/report/organization', '_blank');
+			await new Promise(resolve => setTimeout(resolve, 3000)); // ページ読み込みを待つ
+
+			// 各部署のレポートを生成
+			for (let i = 0; i < departmentList.length; i++) {
+				const dept = departmentList[i];
+				downloadProgress = `部署レポート生成中 (${i + 1}/${departmentList.length}): ${dept}`;
+				const deptWindow = window.open(`/report/department/${encodeURIComponent(dept)}`, '_blank');
+				await new Promise(resolve => setTimeout(resolve, 2000));
+			}
+
+			downloadProgress = '完了！各レポートを別タブで開きました。';
+
+			setTimeout(() => {
+				isGeneratingPDF = false;
+				downloadProgress = '';
+			}, 3000);
+
+		} catch (error) {
+			console.error('PDF生成エラー:', error);
+			downloadProgress = 'エラーが発生しました';
+			setTimeout(() => {
+				isGeneratingPDF = false;
+				downloadProgress = '';
+			}, 3000);
+		}
 	}
 </script>
 
@@ -68,30 +109,41 @@
 			</div>
 		</div>
 	{:else}
-		<!-- 組織全体レポートボタン -->
-		<div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
-			<div class="flex items-center justify-between">
+		<!-- 一括PDF出力ボタン -->
+		<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+			<div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
 				<div>
-					<h3 class="text-lg font-semibold">組織全体のレポート</h3>
-					<p class="text-sm text-blue-100 mt-1">
-						全従業員の平均スコアと全国平均との比較を確認できます
+					<h3 class="text-lg font-semibold text-gray-900">全レポート一括出力</h3>
+					<p class="text-sm text-gray-600 mt-1">
+						組織全体レポートと全部署のレポートを別タブで一括表示します
 					</p>
 				</div>
 				<button
-					on:click={viewOrganizationReport}
-					class="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors flex items-center space-x-2"
+					on:click={generateAllPDFs}
+					disabled={isGeneratingPDF}
+					class="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
 				>
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-						/>
-					</svg>
-					<span>組織レポートを見る</span>
+					{#if isGeneratingPDF}
+						<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+						<span>処理中...</span>
+					{:else}
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+							/>
+						</svg>
+						<span>一括出力</span>
+					{/if}
 				</button>
 			</div>
+			{#if downloadProgress}
+				<div class="px-6 py-3 bg-gray-50 border-t border-gray-200">
+					<p class="text-sm text-gray-700">{downloadProgress}</p>
+				</div>
+			{/if}
 		</div>
 
 		<!-- データサマリー -->
@@ -151,6 +203,48 @@
 						</svg>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<!-- 組織全体レポート -->
+		<div class="bg-white rounded-lg shadow-sm overflow-hidden">
+			<div class="px-6 py-4 border-b border-gray-200">
+				<h3 class="text-lg font-semibold text-gray-900">組織全体のレポート</h3>
+			</div>
+			<div class="overflow-x-auto">
+				<table class="min-w-full divide-y divide-gray-200">
+					<thead class="bg-gray-50">
+						<tr>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								レポート名
+							</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+								対象
+							</th>
+							<th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+								アクション
+							</th>
+						</tr>
+					</thead>
+					<tbody class="bg-white divide-y divide-gray-200">
+						<tr class="hover:bg-gray-50 transition-colors">
+							<td class="px-6 py-4 whitespace-nowrap">
+								<div class="text-sm font-medium text-gray-900">組織全体レポート</div>
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap">
+								<div class="text-sm text-gray-600">全従業員（{$userData.length}名）</div>
+							</td>
+							<td class="px-6 py-4 whitespace-nowrap text-right">
+								<button
+									on:click={viewOrganizationReport}
+									class="text-sm text-primary-600 hover:text-primary-800 font-medium"
+								>
+									レポートを見る →
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 

@@ -11,6 +11,10 @@
 	$: hasData = deptAvg && deptAvg.averageScores;
 	$: orgAvg = $overallAverage;
 
+	function handlePrintPDF() {
+		window.print();
+	}
+
 	// いきいき度分布図データ（散布図）
 	$: ikiikiScatterData = (() => {
 		if (!hasData || !deptAvg) return null;
@@ -206,6 +210,24 @@
 		</div>
 	</div>
 {:else}
+	<!-- PDF出力ボタン（印刷時は非表示） -->
+	<div class="print:hidden fixed top-4 right-4 z-50">
+		<button
+			on:click={handlePrintPDF}
+			class="flex items-center space-x-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-lg"
+		>
+			<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+				/>
+			</svg>
+			<span>PDFで出力</span>
+		</button>
+	</div>
+
 	<!-- ページ1: はじめに -->
 	<div class="max-w-4xl mx-auto p-8 page-break">
 		<div class="text-right text-sm text-gray-600 mb-4">1/10</div>
