@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	body {
+		@apply bg-gray-50 text-gray-900;
+	}
+}
+
+/* 印刷用スタイル */
+@media print {
+	.page-break {
+		page-break-after: always;
+		break-after: page;
+	}
+
+	.print\:hidden {
+		display: none !important;
+	}
+
+	body {
+		background: white;
+	}
+
+	@page {
+		margin: 2cm;
+		size: A4;
+	}
+}
