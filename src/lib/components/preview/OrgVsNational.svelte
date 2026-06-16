@@ -71,7 +71,7 @@
 		<div class="space-y-2">
 			{#each headline as h}
 				<div class="grid grid-cols-12 items-center gap-2 text-sm">
-					<div class="col-span-3 text-gray-700 truncate" title={h.label}>{h.label}</div>
+					<div class="col-span-3 text-gray-700 leading-tight break-words" title={h.label}>{h.label}</div>
 					<div class="col-span-1 text-right font-semibold text-gray-900 tabular-nums">{fmt(h.org)}</div>
 					<!-- 全国比 ダイバージングバー -->
 					<div class="col-span-6">
@@ -133,7 +133,7 @@
 					<div class="text-xs font-bold text-primary-700 border-b border-gray-200 pb-1 mb-1 mt-2">{grp.group}</div>
 					{#each grp.rows as r}
 						<div class="flex items-center gap-2 text-sm py-0.5">
-							<span class="text-gray-700 truncate w-24 flex-shrink-0" title={r.label}>{r.label}</span>
+							<span class="text-gray-700 w-28 flex-shrink-0 leading-tight break-words" title={r.label}>{r.label}</span>
 							<!-- 全国平均(縦線)からの差を 緑(右=良好)/赤(左=要改善) で表示 -->
 							<div class="relative h-3.5 bg-gray-100 rounded flex-1 min-w-[60px]">
 								{#if r.org !== null && r.national !== null}
