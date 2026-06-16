@@ -88,19 +88,29 @@ function processCSVData(data: string[][]): UserData[] {
 	};
 
 	// 各カラムのインデックスを取得
+	const exact = (name: string) => headers.findIndex((h) => h && h.trim() === name);
 	const idIndex = getColumnIndex('ID');
 	const nameIndex = getColumnIndex('氏名');
-	const deptIndex = headers.findIndex(h => h && (h.includes('部署') || h.includes('所属')));
+	// 部署は「読める名称」を優先（所属名/部署名）。コード列(所属コード等)は避ける
+	const deptIndex = (() => {
+		for (const name of ['所属名', '部署名', '部署']) {
+			const i = exact(name);
+			if (i !== -1) return i;
+		}
+		const named = headers.findIndex(
+			(h) => h && (h.includes('部署') || h.includes('所属')) && !h.includes('コード')
+		);
+		return named !== -1 ? named : headers.findIndex((h) => h && (h.includes('部署') || h.includes('所属')));
+	})();
 
 	// 属性別集計用カラム（コード列ではなくラベル列を厳密一致で取得。データがある列のみ後段で採用）
-	const exact = (name: string) => headers.findIndex(h => h && h.trim() === name);
+	// ※「所属」は department（=所属名）と重複するため属性軸には含めない
 	const attrCols: { key: string; idx: number }[] = [
 		{ key: '性別', idx: exact('性別') },
 		{ key: '年代', idx: exact('年代') },
 		{ key: '役職', idx: exact('役職') },
 		{ key: '職種', idx: exact('職種') },
 		{ key: '事業所', idx: exact('事業所') },
-		{ key: '所属', idx: exact('所属名') },
 		{ key: '職場診断用1', idx: exact('職場診断用表記1') }
 	].filter((a) => a.idx !== -1);
 
@@ -167,7 +177,7 @@ function processCSVData(data: string[][]): UserData[] {
 			const user: UserData = {
 				id: idIndex !== -1 ? (row[idIndex] || `user_${i - 1}`) : `user_${i - 1}`,
 				name: nameIndex !== -1 ? (row[nameIndex] || `ユーザー${i - 1}`) : `ユーザー${i - 1}`,
-				department: deptIndex !== -1 ? (row[deptIndex] || '未設定') : '未設定',
+				department: deptIndex !== -1 ? ((row[deptIndex] || '').trim() || '未設定') : '未設定',
 				gender: attributes['性別'],
 				attributes,
 				responses: responses

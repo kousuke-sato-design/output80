@@ -35,7 +35,8 @@ export function cellColorFor(field: ScaleField, value: number | null): { z: numb
 	const nat = nationalOf(field);
 	if (!nat || !nat.sd) return { z: null, color: 'na' };
 	const z = (value - nat.average) / nat.sd;
-	const color: CellColor = z >= 0.5 ? 'good' : z <= -0.5 ? 'bad' : 'mid';
+	// 全国平均からの差を見やすく（±0.3SDで色分け。全尺度 高=良）
+	const color: CellColor = z >= 0.3 ? 'good' : z <= -0.3 ? 'bad' : 'mid';
 	return { z, color };
 }
 

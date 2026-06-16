@@ -122,9 +122,10 @@
 		<h4 class="text-base font-semibold text-gray-900 mb-2">尺度プロフィール（全42尺度・全国平均との比較）</h4>
 		<!-- 凡例：棒・縦線・数値が何を表すか -->
 		<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 mb-3 border border-gray-100 rounded-lg p-2 bg-gray-50">
-			<span class="flex items-center gap-1"><span class="inline-block w-6 h-2.5 bg-green-500 rounded"></span>棒＝<b class="text-gray-800">当組織の値</b>（緑=全国より良好／赤=要改善）</span>
+			<span class="flex items-center gap-1"><span class="inline-block w-4 h-2.5 bg-green-500 rounded-sm"></span><b class="text-green-700">緑＝全国より良好</b>（縦線から右）</span>
+			<span class="flex items-center gap-1"><span class="inline-block w-4 h-2.5 bg-red-500 rounded-sm"></span><b class="text-red-700">赤＝要改善</b>（縦線から左）</span>
 			<span class="flex items-center gap-1"><span class="inline-block w-[2px] h-3.5 bg-gray-800"></span>縦線＝<b class="text-gray-800">全国平均</b></span>
-			<span>数値は左から <b class="text-gray-900">組織値</b>・<span class="text-gray-400">全国平均</span>・<span class="font-medium">全国比</span></span>
+			<span>数値＝ <b class="text-gray-900">組織</b> / <span class="text-gray-400">全国</span> / <span class="font-medium">差</span></span>
 		</div>
 		<div class="grid md:grid-cols-2 gap-x-8 gap-y-1">
 			{#each profileByGroup as grp}
@@ -133,16 +134,24 @@
 					{#each grp.rows as r}
 						<div class="flex items-center gap-2 text-sm py-0.5">
 							<span class="text-gray-700 truncate w-24 flex-shrink-0" title={r.label}>{r.label}</span>
-							<!-- 棒グラフ：組織塗り＋全国平均の縦目盛り -->
-							<div class="relative h-3 bg-gray-100 rounded flex-1 min-w-[48px]">
-								<div class="absolute top-0 bottom-0 left-0 {colorBar[r.color]} rounded" style="width: {scalePct(r.org)}%"></div>
+							<!-- 全国平均(縦線)からの差を 緑(右=良好)/赤(左=要改善) で表示 -->
+							<div class="relative h-3.5 bg-gray-100 rounded flex-1 min-w-[60px]">
+								{#if r.org !== null && r.national !== null}
+									{#if r.org >= r.national}
+										<div class="absolute top-0 bottom-0 bg-green-500 rounded-sm" style="left:{scalePct(r.national)}%; width:{Math.max(1.5, scalePct(r.org) - scalePct(r.national))}%"></div>
+									{:else}
+										<div class="absolute top-0 bottom-0 bg-red-500 rounded-sm" style="left:{scalePct(r.org)}%; width:{Math.max(1.5, scalePct(r.national) - scalePct(r.org))}%"></div>
+									{/if}
+								{:else if r.org !== null}
+									<div class="absolute top-0 bottom-0 left-0 bg-gray-400 rounded-sm" style="width:{scalePct(r.org)}%"></div>
+								{/if}
 								{#if r.national !== null}
-									<div class="absolute top-0 bottom-0 w-0.5 bg-gray-800" style="left: {scalePct(r.national)}%" title="全国平均"></div>
+									<div class="absolute top-0 bottom-0 w-0.5 bg-gray-800" style="left:{scalePct(r.national)}%" title="全国平均"></div>
 								{/if}
 							</div>
 							<span class="tabular-nums text-gray-900 w-9 text-right flex-shrink-0">{fmt(r.org)}</span>
 							<span class="tabular-nums text-gray-400 w-9 text-right flex-shrink-0" title="全国平均">{fmt(r.national)}</span>
-							<span class="tabular-nums {colorText[r.color]} w-12 text-right flex-shrink-0">{fmtDiff(r.diff)}</span>
+							<span class="tabular-nums {colorText[r.color]} w-12 text-right flex-shrink-0 font-medium">{fmtDiff(r.diff)}</span>
 						</div>
 					{/each}
 				</div>

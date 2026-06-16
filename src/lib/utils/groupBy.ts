@@ -2,7 +2,7 @@ import type { UserData, DepartmentData } from '$lib/types';
 import { calculateAverageScores } from './scoreCalculator';
 
 /** グループ軸（'部署' は department、それ以外は attributes のキー） */
-export const ATTRIBUTE_AXES = ['性別', '年代', '役職', '職種', '事業所', '所属', '職場診断用1'];
+export const ATTRIBUTE_AXES = ['性別', '年代', '役職', '職種', '事業所', '職場診断用1'];
 
 export function groupValueOf(u: UserData, axis: string): string | undefined {
 	if (axis === '部署') return u.department;
