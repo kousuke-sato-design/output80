@@ -7,6 +7,7 @@ export interface UserData {
 	email?: string;
 	responses: number[]; // 80項目の回答（1-4点）
 	scores?: ScoreData; // 計算後の尺度得点
+	attributes?: Record<string, string>; // 属性別集計用（性別/年代/役職/職種/事業所/所属/職場診断用 など）
 }
 
 // 尺度得点データ型

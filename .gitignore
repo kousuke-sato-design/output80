@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# SvelteKit / build output
+.svelte-kit/
+build/
+.vercel/
+.vercel_build_output/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Large source materials (keep out of repo)
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.xls
+*.xlsx
+
+# Local scratch
+read-excel.cjs
+
+.vercel
+.playwright-mcp/

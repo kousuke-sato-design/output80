@@ -13,13 +13,16 @@
 			ストレス調査データの分析
 		</h2>
 		<p class="text-lg text-gray-600 max-w-2xl mx-auto">
-			CSVファイルをアップロードすると、自動的に尺度得点を計算し、<br />
+			本番CSV（ユーザー一覧 全部のエクスポート）をそのままアップロードすると、自動的に尺度得点を計算し、<br />
 			全国平均との比較を含む詳細なフィードバックレポートを生成します。
 		</p>
 	</div>
 
-	<!-- ファイルアップロード -->
-	<FileUpload />
+	<!-- 本番CSVアップロード -->
+	<div class="max-w-2xl mx-auto">
+		<p class="text-sm font-medium text-gray-700 mb-2">本番データ（57項目＋オリジナル23項目＝80項目）のCSVをアップロード</p>
+		<FileUpload />
+	</div>
 
 	<!-- サンプルCSVテストボタン -->
 	<div class="text-center mt-4">

@@ -23,8 +23,14 @@
 		background: white;
 	}
 
+	/* 背景色・色分け・棒グラフの色を印刷に出す（全ページ共通） */
+	* {
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+	}
+
 	@page {
-		margin: 2cm;
+		margin: 1.2cm;
 		size: A4;
 	}
 }

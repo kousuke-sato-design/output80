@@ -4,7 +4,7 @@
 
 <div class="min-h-screen bg-gray-50">
 	<!-- ヘッダー -->
-	<header class="bg-white shadow-sm">
+	<header class="bg-white shadow-sm print:hidden">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 			<div class="flex items-center justify-between">
 				<a href="/" class="flex items-center space-x-2">
@@ -53,7 +53,7 @@
 	</main>
 
 	<!-- フッター -->
-	<footer class="bg-white border-t mt-12">
+	<footer class="bg-white border-t mt-12 print:hidden">
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 			<p class="text-center text-sm text-gray-500">
 				新職業性ストレス簡易調査票フィードバックシステム

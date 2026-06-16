@@ -1,4 +1,53 @@
-# 新職業性ストレス簡易調査票フィードバックシステム 要件定義書
+# 新職業性ストレス簡易調査票フィードバックシステム
+
+> 本ファイルの前半は **開発ガイド**（Claude Code 用の実務指示）、後半は **要件定義書**。
+
+---
+
+## 開発ガイド
+
+### 技術構成（現状）
+- SvelteKit 2 + Svelte 4 / Tailwind CSS 3 / TypeScript
+- アダプタ: `@sveltejs/adapter-vercel`（SSR + Vercel Functions）
+- 主要ライブラリ: papaparse(CSV), chart.js + svelte-chartjs(可視化), jspdf + html2canvas(PDF), xlsx, jszip
+- Node.js 22
+
+### コマンド
+```bash
+npm install        # 依存インストール
+npm run dev        # 開発サーバ（http://localhost:5173）
+npm run build      # 本番ビルド（adapter-vercel）
+npm run preview    # ビルド結果のローカルプレビュー
+```
+
+### 開発の基本方針
+- **開発はローカルで進める**（`npm run dev` で確認）。push やデプロイは行わない
+- **デプロイはユーザーが明確に指示したときのみ**実行する。勝手に commit/push/deploy しないこと
+- **DBは使用しない**。データはCSVアップロード→ブラウザメモリ上で処理する完全クライアントサイド構成（永続化なし・サーバー送信なし）
+
+### デプロイ（Vercel — ユーザー指示時のみ）
+- 本番URL: https://output80.vercel.app
+- Vercelプロジェクト: `sougoushinris-projects/output80`（CLIリンク済み・ログイン済み）
+- `main` ブランチへ push すると Vercel が自動で本番デプロイ（2〜3分）
+- 手動デプロイ: `vercel build`（本番ビルド再現）/ `vercel --prod`（本番）/ `vercel deploy`（プレビュー）
+
+### 作業フロー（ローカル）
+1. feature ブランチを切って作業・コミット（main直コミットは避ける）
+2. `npm run dev` で動作確認 / `npm run build` でビルドが通ることを確認
+3. ここで一旦停止。**デプロイ指示があれば** main に ff-merge → `git push origin main`
+
+### 設定ファイル
+- `vercel.json` — framework=sveltekit / region=hnd1（東京）
+- `svelte.config.js` — adapter-vercel
+- `.gitignore` — node_modules / .svelte-kit / .vercel / .env / 大容量バイナリ(pdf,jpg,xls)を除外
+- `.vercel/` — CLIリンク情報（コミット禁止）
+
+### 注意
+- `node_modules` と `.svelte-kit` は git 管理外（過去に誤コミットされていたため追跡解除済み）
+- 個人情報を含むCSVはクライアント処理のみ。サーバー送信・コミット禁止
+- PDFや調査票画像など大容量ソース資料はリポジトリにコミットしない
+
+---
 
 ## プロジェクト概要
 

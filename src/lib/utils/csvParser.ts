@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
 import type { UserData, UploadResult } from '$lib/types';
 import { calculateScores } from './scoreCalculator';
+import { ORIGINAL_QUESTION_MAP } from '$lib/data/originalQuestionMap';
 
 /**
  * CSVファイルを解析してUserDataの配列に変換する
@@ -91,12 +92,36 @@ function processCSVData(data: string[][]): UserData[] {
 	const nameIndex = getColumnIndex('氏名');
 	const deptIndex = headers.findIndex(h => h && (h.includes('部署') || h.includes('所属')));
 
-	// 質問項目のカラムを探す（No001～No080）
+	// 属性別集計用カラム（コード列ではなくラベル列を厳密一致で取得。データがある列のみ後段で採用）
+	const exact = (name: string) => headers.findIndex(h => h && h.trim() === name);
+	const attrCols: { key: string; idx: number }[] = [
+		{ key: '性別', idx: exact('性別') },
+		{ key: '年代', idx: exact('年代') },
+		{ key: '役職', idx: exact('役職') },
+		{ key: '職種', idx: exact('職種') },
+		{ key: '事業所', idx: exact('事業所') },
+		{ key: '所属', idx: exact('所属名') },
+		{ key: '職場診断用1', idx: exact('職場診断用表記1') }
+	].filter((a) => a.idx !== -1);
+
+	// 質問項目のカラムを特定して questionIndices[0..79]（item1〜80）を作る。
+	// - test/旧: 「問診(80)項目No001〜No080」の80連番（No0XXで一致）
+	// - 本番: 「問診(57)項目No001〜No057」(=item1〜57) ＋ 「オリジナル質問:…」23列(=item58〜80)
 	const questionIndices: number[] = [];
 	for (let j = 1; j <= 80; j++) {
 		const questionNum = j.toString().padStart(3, '0');
-		const index = headers.findIndex(h => h && h.includes(`No${questionNum}`));
-		questionIndices.push(index);
+		// 3桁のNoで一致（問診(87)の2桁Noには当たらない）
+		questionIndices.push(headers.findIndex((h) => h && h.includes(`No${questionNum}`)));
+	}
+	// 本番CSV: No058〜080 が無い場合、オリジナル質問を設問文キーワードで item58〜80 に割り当てる
+	if (headers.some((h) => h && h.includes('オリジナル質問'))) {
+		for (const def of ORIGINAL_QUESTION_MAP) {
+			if (questionIndices[def.item - 1] === -1) {
+				questionIndices[def.item - 1] = headers.findIndex(
+					(h) => h && h.includes('オリジナル') && h.includes(def.keyword)
+				);
+			}
+		}
 	}
 
 	// 3行目以降がデータ
@@ -131,11 +156,20 @@ function processCSVData(data: string[][]): UserData[] {
 				continue;
 			}
 
+			// 属性を抽出（空値は入れない）
+			const attributes: Record<string, string> = {};
+			for (const a of attrCols) {
+				const v = (row[a.idx] || '').trim();
+				if (v) attributes[a.key] = v;
+			}
+
 			// ユーザーデータを作成
 			const user: UserData = {
 				id: idIndex !== -1 ? (row[idIndex] || `user_${i - 1}`) : `user_${i - 1}`,
 				name: nameIndex !== -1 ? (row[nameIndex] || `ユーザー${i - 1}`) : `ユーザー${i - 1}`,
 				department: deptIndex !== -1 ? (row[deptIndex] || '未設定') : '未設定',
+				gender: attributes['性別'],
+				attributes,
 				responses: responses
 			};
 
