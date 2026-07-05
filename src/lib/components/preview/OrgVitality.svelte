@@ -11,6 +11,7 @@
 		const n = nationalOf(f);
 		return n ? n.average : NaN;
 	};
+	const fmtV = (x: number): string => (Number.isNaN(x) ? '—' : x.toFixed(2));
 
 	// いきいき度分布図: X=職場の一体感, Y=ワーク・エンゲイジメント
 	$: scatterPoints = [
@@ -38,13 +39,13 @@
 	</div>
 
 	<!-- 「いきいき」とは何か（公式FBサンプル「はじめに」準拠） -->
-	<div class="mx-5 mt-4 rounded-lg border border-emerald-200 bg-emerald-50/60 p-4">
-		<h5 class="text-sm font-bold text-emerald-900 mb-1.5">「いきいき」とは？</h5>
+	<div class="mx-5 mt-4 rounded-lg border border-gray-100 bg-gray-50/70 p-4">
+		<h5 class="text-sm font-bold text-gray-800 mb-1.5">「いきいき」とは</h5>
 		<p class="text-sm text-gray-700 leading-relaxed">
-			この調査では、健康の保持・増進に加えて<b>従業員のいきいき（個人の活力）</b>と<b>職場のいきいき（職場の一体感）</b>を高める
-			「健康いきいき職場」づくりを目標にしています。
-			<b class="text-emerald-800">個人のいきいき＝ワーク・エンゲイジメント</b>（仕事から活力を得て、仕事に誇りを感じている状態）、
-			<b class="text-emerald-800">職場のいきいき＝職場の一体感</b>（お互いに理解し認め合い、助け合って業務を遂行している状態）で測ります。
+			この調査では、健康の保持・増進に加えて<b>従業員のいきいき（個人の活力）</b>と<b>職場のいきいき（職場の一体感）</b>を高める「健康いきいき職場」づくりを目標にしています。
+			<b>個人のいきいき＝ワーク・エンゲイジメント</b>（仕事から活力を得て、仕事に誇りを感じている状態）、
+			<b>職場のいきいき＝職場の一体感</b>（お互いに理解し認め合い、助け合って業務を遂行している状態）で測ります。
+			仕事の<b>負担</b>は心身の健康に、仕事の<b>資源</b>は個人と組織の活性化につながります。
 		</p>
 	</div>
 
@@ -63,8 +64,10 @@
 				/>
 			</div>
 			<figcaption class="text-sm text-gray-600 leading-relaxed mt-2">
-				<b>見方：</b>縦軸＝個人のいきいき、横軸＝職場のいきいき。<b class="text-primary-700">●が当組織</b>、◆が全国平均です。
-				<b>右上にあるほど個人も職場もいきいきした状態</b>。全国平均より左下にある場合は、活性化の余地があります。
+				<b>見方：</b>縦軸＝個人のいきいき、横軸＝職場のいきいき。青が当組織、オレンジが全国平均です。
+				<b>右上にあるほど個人も職場もいきいきした状態</b>。全国平均より左下にある場合は、活性化の余地があります。<br />
+				当組織：ワーク・エンゲイジメント {fmtV(v(overallAverage, 'workEngagement'))}（全国 {fmtV(nat('workEngagement'))}）／
+				職場の一体感 {fmtV(v(overallAverage, 'workplaceUnity'))}（全国 {fmtV(nat('workplaceUnity'))}）
 			</figcaption>
 		</figure>
 
@@ -84,32 +87,4 @@
 		</figure>
 	</div>
 
-	<!-- 健康いきいき職場モデル（負担・資源とアウトカムの関係） -->
-	<div class="mx-5 mb-5 rounded-lg border border-gray-200 bg-gray-50/60 p-4">
-		<h5 class="text-sm font-bold text-gray-800 mb-2">「健康いきいき職場」モデル — この調査が測っているもの</h5>
-		<div class="flex flex-wrap items-stretch gap-2 text-sm">
-			<div class="flex-1 min-w-[13rem] rounded-lg bg-yellow-50 border border-yellow-300 p-3">
-				<p class="font-bold text-yellow-900 mb-1">仕事の負担</p>
-				<p class="text-xs text-gray-600 leading-relaxed">量的・質的・身体的負担、対人関係、職場環境、情緒的負担、役割葛藤など</p>
-			</div>
-			<div class="flex-1 min-w-[13rem] rounded-lg bg-sky-50 border border-sky-300 p-3">
-				<p class="font-bold text-sky-900 mb-1">仕事の資源（作業・部署・事業場）</p>
-				<p class="text-xs text-gray-600 leading-relaxed">コントロール、上司・同僚の支援、報酬、経営層との信頼関係、人事評価など</p>
-			</div>
-			<div class="flex items-center text-2xl text-gray-400 px-1">→</div>
-			<div class="flex-1 min-w-[13rem] rounded-lg bg-orange-50 border border-orange-300 p-3">
-				<p class="font-bold text-orange-900 mb-1">アウトカム（成果）</p>
-				<p class="text-xs text-gray-600 leading-relaxed">心身の健康／従業員のいきいき（ワーク・エンゲイジメント）／職場の一体感／ハラスメントのない職場</p>
-			</div>
-			<div class="flex items-center text-2xl text-gray-400 px-1">→</div>
-			<div class="flex-1 min-w-[11rem] rounded-lg bg-emerald-50 border border-emerald-300 p-3">
-				<p class="font-bold text-emerald-900 mb-1">期待される成果</p>
-				<p class="text-xs text-gray-600 leading-relaxed">生産性・イノベーション、従業員の満足・幸福、社会への貢献</p>
-			</div>
-		</div>
-		<p class="text-xs text-gray-500 mt-2 leading-relaxed">
-			仕事の<b>負担</b>は心身の健康に（健康障害／健康増進プロセス）、仕事の<b>資源</b>は個人と組織の活性化に（活性化プロセス）つながります。
-			負担を減らすだけでなく<b>資源を増やす</b>ことが、いきいきした職場づくりのポイントです。
-		</p>
-	</div>
 </section>

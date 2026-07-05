@@ -20,40 +20,40 @@ export interface ScaleDef {
 
 export const SCALES: ScaleDef[] = [
 	// 仕事の負担
-	{ field: 'quantitativeLoad', label: '量的負担', group: '仕事の負担', nationalKey: '仕事の量的負担' },
-	{ field: 'qualitativeLoad', label: '質的負担', group: '仕事の負担', nationalKey: '仕事の質的負担' },
-	{ field: 'physicalLoad', label: '身体的負担', group: '仕事の負担', nationalKey: '身体的負担度' },
-	{ field: 'interpersonalRelations', label: '対人関係', group: '仕事の負担', nationalKey: '職場での対人関係' },
+	{ field: 'quantitativeLoad', label: '仕事の量的負担', group: '仕事の負担', nationalKey: '仕事の量的負担' },
+	{ field: 'qualitativeLoad', label: '仕事の質的負担', group: '仕事の負担', nationalKey: '仕事の質的負担' },
+	{ field: 'physicalLoad', label: '身体的負担度', group: '仕事の負担', nationalKey: '身体的負担度' },
+	{ field: 'interpersonalRelations', label: '職場での対人関係', group: '仕事の負担', nationalKey: '職場での対人関係' },
 	{ field: 'workplaceEnvironment', label: '職場環境', group: '仕事の負担', nationalKey: '職場環境' },
 	{ field: 'emotionalLoad', label: '情緒的負担', group: '仕事の負担', nationalKey: '情緒的負担' },
 	{ field: 'roleConflict', label: '役割葛藤', group: '仕事の負担', nationalKey: '役割葛藤' },
-	{ field: 'workSelfBalanceNegative', label: 'WSB(ネガ)', group: '仕事の負担', nationalKey: 'ワーク・セルフ・バランス（ネガティブ）' },
+	{ field: 'workSelfBalanceNegative', label: 'ワーク・セルフ・バランス（ネガティブ）', group: '仕事の負担', nationalKey: 'ワーク・セルフ・バランス（ネガティブ）' },
 	// 作業レベル資源
-	{ field: 'jobControl', label: 'コントロール', group: '作業レベル資源', nationalKey: '仕事のコントロール' },
-	{ field: 'jobFitness', label: '適性', group: '作業レベル資源', nationalKey: '仕事の適性' },
+	{ field: 'jobControl', label: '仕事のコントロール', group: '作業レベル資源', nationalKey: '仕事のコントロール' },
+	{ field: 'jobFitness', label: '仕事の適性', group: '作業レベル資源', nationalKey: '仕事の適性' },
 	{ field: 'skillUtilization', label: '技能の活用', group: '作業レベル資源', nationalKey: '技能の活用' },
 	{ field: 'jobSignificance', label: '仕事の意義', group: '作業レベル資源', nationalKey: '仕事の意義' },
 	{ field: 'roleClarification', label: '役割明確さ', group: '作業レベル資源', nationalKey: '役割明確さ' },
 	{ field: 'growthOpportunity', label: '成長の機会', group: '作業レベル資源', nationalKey: '成長の機会' },
 	// 部署レベル資源
-	{ field: 'supervisorSupport', label: '上司の支援', group: '部署レベル資源', nationalKey: '上司のサポート' },
-	{ field: 'colleagueSupport', label: '同僚の支援', group: '部署レベル資源', nationalKey: '同僚のサポート' },
-	{ field: 'familySupport', label: '家族・友人の支援', group: '部署レベル資源', nationalKey: '家族・友人のサポート' },
+	{ field: 'supervisorSupport', label: '上司のサポート', group: '部署レベル資源', nationalKey: '上司のサポート' },
+	{ field: 'colleagueSupport', label: '同僚のサポート', group: '部署レベル資源', nationalKey: '同僚のサポート' },
+	{ field: 'familySupport', label: '家族・友人のサポート', group: '部署レベル資源', nationalKey: '家族・友人のサポート' },
 	{ field: 'economicReward', label: '経済・地位報酬', group: '部署レベル資源', nationalKey: '経済・地位報酬' },
 	{ field: 'respectReward', label: '尊重報酬', group: '部署レベル資源', nationalKey: '尊重報酬' },
 	{ field: 'stabilityReward', label: '安定報酬', group: '部署レベル資源', nationalKey: '安定報酬' },
-	{ field: 'supervisorLeadership', label: 'リーダーシップ', group: '部署レベル資源', nationalKey: '上司のリーダーシップ' },
-	{ field: 'supervisorFairness', label: '上司の公正', group: '部署レベル資源', nationalKey: '上司の公正な態度' },
-	{ field: 'praisableWorkplace', label: 'ほめる職場', group: '部署レベル資源', nationalKey: 'ほめてもらえる職場' },
-	{ field: 'failureAcceptance', label: '失敗を認める', group: '部署レベル資源', nationalKey: '失敗を認める職場' },
+	{ field: 'supervisorLeadership', label: '上司のリーダーシップ', group: '部署レベル資源', nationalKey: '上司のリーダーシップ' },
+	{ field: 'supervisorFairness', label: '上司の公正な態度', group: '部署レベル資源', nationalKey: '上司の公正な態度' },
+	{ field: 'praisableWorkplace', label: 'ほめてもらえる職場', group: '部署レベル資源', nationalKey: 'ほめてもらえる職場' },
+	{ field: 'failureAcceptance', label: '失敗を認める職場', group: '部署レベル資源', nationalKey: '失敗を認める職場' },
 	// 事業場レベル資源
-	{ field: 'managementTrust', label: '経営層信頼', group: '事業場レベル資源', nationalKey: '経営層との信頼関係' },
-	{ field: 'changeAdaptation', label: '変化対応', group: '事業場レベル資源', nationalKey: '変化への対応' },
+	{ field: 'managementTrust', label: '経営層との信頼関係', group: '事業場レベル資源', nationalKey: '経営層との信頼関係' },
+	{ field: 'changeAdaptation', label: '変化への対応', group: '事業場レベル資源', nationalKey: '変化への対応' },
 	{ field: 'individualRespect', label: '個人の尊重', group: '事業場レベル資源', nationalKey: '個人の尊重' },
-	{ field: 'fairEvaluation', label: '公正な評価', group: '事業場レベル資源', nationalKey: '公正な人事評価' },
-	{ field: 'diversitySupport', label: '多様性対応', group: '事業場レベル資源', nationalKey: '多様な労働者への対応' },
+	{ field: 'fairEvaluation', label: '公正な人事評価', group: '事業場レベル資源', nationalKey: '公正な人事評価' },
+	{ field: 'diversitySupport', label: '多様な労働者への対応', group: '事業場レベル資源', nationalKey: '多様な労働者への対応' },
 	{ field: 'careerDevelopment', label: 'キャリア形成', group: '事業場レベル資源', nationalKey: 'キャリア形成' },
-	{ field: 'workSelfBalancePositive', label: 'WSB(ポジ)', group: '事業場レベル資源', nationalKey: 'ワーク・セルフ・バランス（ポジティブ）' },
+	{ field: 'workSelfBalancePositive', label: 'ワーク・セルフ・バランス（ポジティブ）', group: '事業場レベル資源', nationalKey: 'ワーク・セルフ・バランス（ポジティブ）' },
 	// いきいきアウトカム
 	{ field: 'vigor', label: '活気', group: 'いきいき', nationalKey: '活気' },
 	{ field: 'workplaceUnity', label: '職場の一体感', group: 'いきいき', nationalKey: '職場の一体感' },
@@ -66,14 +66,14 @@ export const SCALES: ScaleDef[] = [
 	{ field: 'physicalComplaints', label: '身体愁訴', group: '心身の健康', nationalKey: '身体愁訴' },
 	{ field: 'psychologicalStress', label: '心理的ストレス反応', group: '心身の健康', nationalKey: '心理的ストレス反応合計' },
 	// 職場のハラスメント・満足度
-	{ field: 'harassment', label: 'ハラスメントの少なさ', group: 'ハラスメント・満足', nationalKey: '職場のハラスメント' },
+	{ field: 'harassment', label: '職場のハラスメント', group: 'ハラスメント・満足', nationalKey: '職場のハラスメント' },
 	{ field: 'jobSatisfaction', label: '仕事満足度', group: 'ハラスメント・満足', nationalKey: '仕事満足度' },
 	{ field: 'familySatisfaction', label: '家庭満足度', group: 'ハラスメント・満足', nationalKey: '家庭満足度' },
 	// 合計（対策領域別）
-	{ field: 'totalWorkload', label: '仕事の負担(合計)', group: '合計', nationalKey: '仕事の負担合計' },
-	{ field: 'totalTaskLevelResources', label: '作業レベル資源(合計)', group: '合計', nationalKey: '作業レベル資源合計' },
-	{ field: 'totalDepartmentLevelResources', label: '部署レベル資源(合計)', group: '合計', nationalKey: '部署レベル資源合計' },
-	{ field: 'totalOrganizationLevelResources', label: '事業場レベル資源(合計)', group: '合計', nationalKey: '事業場レベル資源合計' }
+	{ field: 'totalWorkload', label: '仕事の負担合計', group: '合計', nationalKey: '仕事の負担合計' },
+	{ field: 'totalTaskLevelResources', label: '作業レベル資源合計', group: '合計', nationalKey: '作業レベル資源合計' },
+	{ field: 'totalDepartmentLevelResources', label: '部署レベル資源合計', group: '合計', nationalKey: '部署レベル資源合計' },
+	{ field: 'totalOrganizationLevelResources', label: '事業場レベル資源合計', group: '合計', nationalKey: '事業場レベル資源合計' }
 ];
 
 /** 比較グラフのドロップダウン用（全42尺度＋4合計） */

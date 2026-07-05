@@ -1,24 +1,57 @@
 <script lang="ts">
 	import type { ScoreData } from '$lib/types';
-	import { HEADLINE_FIELDS, SCALES, PROFILE_GROUP_ORDER, type ScaleField } from '$lib/data/scaleMeta';
-	import { orgVsNational, type ScaleVsNational, type CellColor } from '$lib/utils/orgMatrix';
-	import { rateByZ } from '$lib/utils/rating';
-	import { SCALE_DESCRIPTIONS, GROUP_DESCRIPTIONS } from '$lib/data/scaleDescriptions';
+	import { TOTAL_FIELDS, type ScaleField } from '$lib/data/scaleMeta';
+	import { orgVsNational, type CellColor } from '$lib/utils/orgMatrix';
+	import { SCALE_DESCRIPTIONS } from '$lib/data/scaleDescriptions';
 	import OrgVitality from './OrgVitality.svelte';
 
 	export let overallAverage: ScoreData | null;
 	export let totalUsers = 0;
 	export let deptCount = 0;
 
-	$: headline = orgVsNational(overallAverage, HEADLINE_FIELDS);
+	// 公式フィードバック書式（80sample.xls FB書式）の章立て。2〜6章＝5つのプロフィール。
+	const SECTIONS: { no: number; title: string; fields: ScaleField[] }[] = [
+		{
+			no: 2,
+			title: '仕事の負担プロフィール',
+			fields: [
+				'quantitativeLoad', 'qualitativeLoad', 'physicalLoad', 'interpersonalRelations',
+				'workplaceEnvironment', 'emotionalLoad', 'roleConflict', 'workSelfBalanceNegative'
+			]
+		},
+		{
+			no: 3,
+			title: '仕事の資源（作業レベル）プロフィール',
+			fields: ['jobControl', 'jobFitness', 'skillUtilization', 'jobSignificance', 'roleClarification', 'growthOpportunity']
+		},
+		{
+			no: 4,
+			title: '仕事の資源（部署レベル）プロフィール',
+			fields: [
+				'supervisorSupport', 'colleagueSupport', 'familySupport', 'economicReward', 'respectReward',
+				'stabilityReward', 'supervisorLeadership', 'supervisorFairness', 'praisableWorkplace', 'failureAcceptance'
+			]
+		},
+		{
+			no: 5,
+			title: '仕事の資源（事業場レベル）プロフィール',
+			fields: [
+				'managementTrust', 'changeAdaptation', 'individualRespect', 'fairEvaluation',
+				'diversitySupport', 'careerDevelopment', 'workSelfBalancePositive'
+			]
+		},
+		{
+			no: 6,
+			title: '健康および満足度プロフィール',
+			fields: [
+				'vigor', 'irritation', 'fatigue', 'anxiety', 'depression', 'psychologicalStress',
+				'physicalComplaints', 'harassment', 'jobSatisfaction', 'familySatisfaction'
+			]
+		}
+	];
 
-	// 全尺度プロフィール（合計を除く42尺度）をグループ順に
-	const profileFields = SCALES.filter((s) => s.group !== '合計').map((s) => s.field) as ScaleField[];
-	$: profile = orgVsNational(overallAverage, profileFields);
-	$: profileByGroup = PROFILE_GROUP_ORDER.map((g) => ({
-		group: g,
-		rows: profile.filter((r) => r.group === g)
-	})).filter((x) => x.rows.length > 0);
+	$: sections = SECTIONS.map((s) => ({ ...s, rows: orgVsNational(overallAverage, s.fields) }));
+	$: totals = orgVsNational(overallAverage, TOTAL_FIELDS);
 
 	const colorText: Record<CellColor, string> = {
 		good: 'text-green-700',
@@ -33,11 +66,6 @@
 		na: 'bg-gray-300'
 	};
 
-	// 全国比バー幅（zを±2SDで0-100%に。中央=全国平均）
-	function barPct(z: number | null): number {
-		if (z === null) return 0;
-		return Math.min(100, (Math.abs(z) / 2) * 100);
-	}
 	function fmt(v: number | null): string {
 		return v === null ? '—' : v.toFixed(2);
 	}
@@ -45,7 +73,7 @@
 	function fmtDiff(v: number | null): string {
 		return v === null ? '—' : v >= 0 ? `▲+${v.toFixed(2)}` : `▼${v.toFixed(2)}`;
 	}
-	// 1〜4スケールを0-100%に（棒グラフ用）
+	// 1〜4スケールを0-100%に（バーの位置計算用）
 	function scalePct(v: number | null): number {
 		if (v === null) return 0;
 		return Math.max(0, Math.min(100, ((v - 1) / 3) * 100));
@@ -53,172 +81,103 @@
 </script>
 
 <div class="space-y-5">
-	<!-- いきいきプロフィール全体図（散布図＋レーダー） -->
+	<!-- 1. いきいきプロフィール全体図 -->
 	<OrgVitality {overallAverage} />
 
-	<!-- 見出し：領域サマリー（全国比） -->
+	<!-- 対策領域別合計（公式FB書式の合計表に対応） -->
 	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
-		<div class="flex items-baseline justify-between mb-3">
-			<h4 class="text-base font-semibold text-gray-900">領域サマリー（組織全体 vs 全国平均）</h4>
+		<div class="flex items-baseline justify-between mb-1">
+			<h4 class="text-base font-semibold text-gray-900">対策領域別合計（組織全体 vs 全国平均）</h4>
 			<span class="text-xs text-gray-500">回答者 {totalUsers}名 / {deptCount}部署</span>
 		</div>
-		<!-- 列見出し（凡例） -->
-		<div class="grid grid-cols-12 items-center gap-2 text-[11px] text-gray-400 mb-1 pb-1 border-b border-gray-100">
-			<div class="col-span-3">指標</div>
-			<div class="col-span-1 text-right">組織値</div>
-			<div class="col-span-5 flex justify-between px-1">
-				<span>◀ 要改善</span><span class="font-medium text-gray-500">｜全国平均</span><span>良好 ▶</span>
-			</div>
-			<div class="col-span-2 text-right">全国比</div>
-			<div class="col-span-1 text-right">判定</div>
-		</div>
+		<p class="text-sm text-gray-500 mb-3">上の4領域バランス（レーダー）を数値で示したものです。│＝全国平均。バーが右（緑）に伸びるほど全国より良好、左（赤）に伸びるほど要改善です。</p>
 		<div class="space-y-2">
-			{#each headline as h}
-				{@const rating = rateByZ(h.z)}
-				<div class="grid grid-cols-12 items-center gap-2 text-sm">
-					<div class="col-span-3 leading-tight">
-						<span class="text-gray-700 break-words" title={h.label}>{h.label}</span>
-						{#if SCALE_DESCRIPTIONS[h.field]}
-							<span class="block text-xs text-gray-500 leading-snug">{SCALE_DESCRIPTIONS[h.field]?.desc}</span>
-						{/if}
-					</div>
-					<div class="col-span-1 text-right font-semibold text-gray-900 tabular-nums">{fmt(h.org)}</div>
-					<!-- 全国比 ダイバージングバー -->
-					<div class="col-span-5">
-						<div class="relative h-3 bg-gray-100 rounded">
-							<div class="absolute top-0 bottom-0 left-1/2 w-px bg-gray-400"></div>
-							{#if h.z !== null}
-								{#if h.z >= 0}
-									<div class="absolute top-0 bottom-0 left-1/2 {colorBar[h.color]} rounded-r" style="width: {barPct(h.z) / 2}%"></div>
-								{:else}
-									<div class="absolute top-0 bottom-0 {colorBar[h.color]} rounded-l" style="right: 50%; width: {barPct(h.z) / 2}%"></div>
-								{/if}
+			{#each totals as t}
+				<div class="flex items-center gap-3 text-sm">
+					<span class="text-gray-700 w-44 flex-shrink-0 leading-tight">{t.label}</span>
+					<span class="tabular-nums font-semibold text-gray-900 w-10 text-right flex-shrink-0">{fmt(t.org)}</span>
+					<div class="relative h-3.5 bg-gray-100 rounded flex-1">
+						{#if t.org !== null && t.national !== null}
+							{#if t.org >= t.national}
+								<div class="absolute top-0 bottom-0 bg-green-500 rounded-sm" style="left:{scalePct(t.national)}%; width:{Math.max(1.5, scalePct(t.org) - scalePct(t.national))}%"></div>
+							{:else}
+								<div class="absolute top-0 bottom-0 bg-red-500 rounded-sm" style="left:{scalePct(t.org)}%; width:{Math.max(1.5, scalePct(t.national) - scalePct(t.org))}%"></div>
 							{/if}
-						</div>
-					</div>
-					<div class="col-span-2 text-xs {colorText[h.color]} tabular-nums text-right">
-						{fmtDiff(h.diff)}
-					</div>
-					<div class="col-span-1 text-right">
-						{#if rating}
-							<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap {rating.badge}" title="全国比{h.z?.toFixed(2)}SD">{rating.symbol}{rating.label}</span>
+							<div class="absolute top-0 bottom-0 w-0.5 bg-gray-800" style="left:{scalePct(t.national)}%" title="全国平均"></div>
 						{/if}
 					</div>
+					<span class="tabular-nums text-gray-400 w-10 text-right flex-shrink-0" title="全国平均">{fmt(t.national)}</span>
+					<span class="tabular-nums {colorText[t.color]} w-16 text-right flex-shrink-0 font-medium">{fmtDiff(t.diff)}</span>
 				</div>
 			{/each}
 		</div>
-		<p class="text-sm text-gray-500 mt-2">バーは「全国平均（中央線）からの差」。右(緑)＝全国より良好／左(赤)＝要改善。全尺度 高得点ほど良好。判定は全国比のSD換算（◎○＝良好側、△⚠＝注意側、−＝平均的）。</p>
+		<p class="text-xs text-gray-400 mt-2">数値＝ 組織全体 ／ 全国平均 ／ 差。得点は最高4点・最低1点で、高い方が良好な状態を示します。</p>
 	</div>
 
-	<!-- このレポートの見方（数値の見方＋活用ステップ） -->
-	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
-		<h4 class="text-base font-semibold text-gray-900 mb-2">このレポートの見方</h4>
-
-		<!-- 数値の見方（公式FBサンプル「このフィードバックの見方」準拠） -->
-		<div class="grid sm:grid-cols-3 gap-3 mb-4">
-			<div class="rounded-lg border-2 border-primary-200 bg-primary-50/50 p-3">
-				<p class="text-sm font-bold text-primary-800 mb-1">📏 得点は1〜4点</p>
-				<p class="text-sm text-gray-700 leading-relaxed">最高4点・最低1点になるよう変換しています。設問数の違いに関係なく、どの尺度も同じものさしで比べられます。</p>
-			</div>
-			<div class="rounded-lg border-2 border-green-200 bg-green-50/50 p-3">
-				<p class="text-sm font-bold text-green-800 mb-1">⬆ すべて高いほど良好</p>
-				<p class="text-sm text-gray-700 leading-relaxed">数字はすべて「高い方が好ましい状態」を示すよう変換済み。負担系の尺度も、高得点＝負担が少ない＝良好です。</p>
-			</div>
-			<div class="rounded-lg border-2 border-amber-200 bg-amber-50/50 p-3">
-				<p class="text-sm font-bold text-amber-800 mb-1">🇯🇵 全国平均と比較</p>
-				<p class="text-sm text-gray-700 leading-relaxed">全国の労働者を対象とした調査に基づく標準データ（基準点 N≒1620・参考値）と比べて、貴組織の特徴を知ることができます。</p>
-			</div>
-		</div>
-
-		<ol class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-1 list-none p-0 m-0">
-			{#each [
-				{ n: 'STEP 1', t: 'いきいきプロフィール全体図で、個人と職場のいきいきの位置を確認' },
-				{ n: 'STEP 2', t: '4領域バランス（レーダー）で、注目すべき対策領域を確認' },
-				{ n: 'STEP 3', t: '領域サマリー・尺度プロフィールで、傾向の原因となっている個別の要因を確認' },
-				{ n: 'STEP 4', t: '強みをのばすか、弱みを補強する改善方策を考える' }
-			] as step}
-				<li class="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
-					<span class="inline-block text-xs font-bold tracking-wider text-primary-700 bg-primary-50 rounded px-1.5 py-0.5 mb-1">{step.n}</span>
-					<p class="text-sm text-gray-700 leading-relaxed">{step.t}</p>
-				</li>
-			{/each}
-		</ol>
-		<p class="text-xs text-gray-400 mt-2">全国平均は参考値（新職業性ストレス簡易調査票 基準データ N≒1620）であり、全国標準値ではありません。</p>
-	</div>
-
-	<!-- 全尺度プロフィール -->
-	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid print:break-before-page">
-		<h4 class="text-base font-semibold text-gray-900 mb-2">尺度プロフィール（全42尺度・全国平均との比較）</h4>
-		<!-- 凡例：棒・縦線・数値が何を表すか -->
-		<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-3 border border-gray-100 rounded-lg p-2 bg-gray-50">
-			<span class="flex items-center gap-1"><span class="inline-block w-4 h-2.5 bg-green-500 rounded-sm"></span><b class="text-green-700">緑＝全国より良好</b>（縦線から右）</span>
-			<span class="flex items-center gap-1"><span class="inline-block w-4 h-2.5 bg-red-500 rounded-sm"></span><b class="text-red-700">赤＝要改善</b>（縦線から左）</span>
-			<span class="flex items-center gap-1"><span class="inline-block w-[2px] h-3.5 bg-gray-800"></span>縦線＝<b class="text-gray-800">全国平均</b></span>
-			<span>数値＝ <b class="text-gray-900">組織</b> / <span class="text-gray-400">全国</span> / <span class="font-medium">差</span></span>
-		</div>
-		<div class="grid md:grid-cols-2 gap-x-8 gap-y-1">
-			{#each profileByGroup as grp}
-				<div class="break-inside-avoid">
-					<div class="border-b border-gray-200 pb-1 mb-1 mt-2 leading-tight">
-						<span class="text-sm font-bold text-primary-700">{grp.group}</span>
-						{#if GROUP_DESCRIPTIONS[grp.group]}
-							<span class="text-xs text-gray-500 ml-1.5">{GROUP_DESCRIPTIONS[grp.group]}</span>
-						{/if}
-					</div>
-					{#each grp.rows as r}
-						<div class="flex items-center gap-2 text-sm py-0.5">
-							<span class="text-gray-700 w-28 flex-shrink-0 leading-tight break-words" title={r.label}>{r.label}</span>
-							<!-- 全国平均(縦線)からの差を 緑(右=良好)/赤(左=要改善) で表示 -->
-							<div class="relative h-3.5 bg-gray-100 rounded flex-1 min-w-[60px]">
+	<!-- 2〜6. 公式の5プロフィール章：左＝尺度名と説明、右＝全国平均と比較するバー -->
+	{#each sections as sec}
+		<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid print:break-before-page">
+			<h4 class="text-base font-semibold text-gray-900">{sec.no}. {sec.title}</h4>
+			<p class="text-sm text-gray-500 mt-0.5 mb-3">│＝全国平均。バーが右（緑）＝全国より良好、左（赤）＝要改善。得点は1〜4点で高いほど良好です。</p>
+			<div>
+				{#each sec.rows as r}
+					<div class="grid md:grid-cols-[minmax(15rem,2fr),3fr] gap-x-6 gap-y-1 items-center py-2.5 border-b border-gray-100 last:border-b-0">
+						<div class="leading-snug">
+							<p class="text-sm font-semibold text-gray-900">{r.label}</p>
+							{#if SCALE_DESCRIPTIONS[r.field]}
+								<p class="text-xs text-gray-500 mt-0.5">{SCALE_DESCRIPTIONS[r.field]?.desc}</p>
+							{/if}
+						</div>
+						<div class="flex items-center gap-3 text-sm">
+							<span class="tabular-nums font-semibold text-gray-900 w-10 text-right flex-shrink-0">{fmt(r.org)}</span>
+							<div class="relative h-3.5 bg-gray-100 rounded flex-1 min-w-[80px]">
 								{#if r.org !== null && r.national !== null}
 									{#if r.org >= r.national}
 										<div class="absolute top-0 bottom-0 bg-green-500 rounded-sm" style="left:{scalePct(r.national)}%; width:{Math.max(1.5, scalePct(r.org) - scalePct(r.national))}%"></div>
 									{:else}
 										<div class="absolute top-0 bottom-0 bg-red-500 rounded-sm" style="left:{scalePct(r.org)}%; width:{Math.max(1.5, scalePct(r.national) - scalePct(r.org))}%"></div>
 									{/if}
+									<div class="absolute top-0 bottom-0 w-0.5 bg-gray-800" style="left:{scalePct(r.national)}%" title="全国平均"></div>
 								{:else if r.org !== null}
 									<div class="absolute top-0 bottom-0 left-0 bg-gray-400 rounded-sm" style="width:{scalePct(r.org)}%"></div>
 								{/if}
-								{#if r.national !== null}
-									<div class="absolute top-0 bottom-0 w-0.5 bg-gray-800" style="left:{scalePct(r.national)}%" title="全国平均"></div>
-								{/if}
 							</div>
-							<span class="tabular-nums text-gray-900 w-9 text-right flex-shrink-0">{fmt(r.org)}</span>
-							<span class="tabular-nums text-gray-400 w-9 text-right flex-shrink-0" title="全国平均">{fmt(r.national)}</span>
-							<span class="tabular-nums {colorText[r.color]} w-12 text-right flex-shrink-0 font-medium">{fmtDiff(r.diff)}</span>
+							<span class="tabular-nums text-gray-400 w-10 text-right flex-shrink-0" title="全国平均">{fmt(r.national)}</span>
+							<span class="tabular-nums {colorText[r.color]} w-16 text-right flex-shrink-0 font-medium">{fmtDiff(r.diff)}</span>
 						</div>
-					{/each}
-				</div>
-			{/each}
+					</div>
+				{/each}
+			</div>
+			<p class="text-xs text-gray-400 mt-2">数値＝ 組織全体 ／ 全国平均 ／ 差。全国平均は参考値（基準データ N≒1620）です。</p>
 		</div>
-	</div>
+	{/each}
 
 	<!-- 結果から改善へ（公式FBサンプル準拠の活用ガイド） -->
 	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
-		<h4 class="text-base font-semibold text-gray-900 mb-1">結果から改善へ — このレポートの活かし方</h4>
-		<p class="text-sm text-gray-600 leading-relaxed mb-3">
-			プロフィールから職場の強みや弱み（問題点）を把握したら、<b class="text-gray-800">強みをのばす対策</b>と<b class="text-gray-800">問題点を補強する対策</b>を考えます。
+		<h4 class="text-base font-semibold text-gray-900 mb-1">結果から改善へ</h4>
+		<p class="text-sm text-gray-700 leading-relaxed mb-3">
+			これらのプロフィールから職場の強みや弱み（問題点）を把握したら、健康いきいき職場の推進のために、強みをのばしたり、あるいは問題点を補強する対策を考えます。
 		</p>
 		<div class="grid md:grid-cols-2 gap-3 mb-3">
-			<div class="rounded-lg border-2 border-sky-200 bg-sky-50/50 p-4">
-				<p class="text-sm font-bold text-sky-800 mb-1.5">👥 管理職の立場では</p>
+			<div class="rounded-lg border border-gray-100 bg-gray-50/70 p-4">
+				<p class="text-sm font-bold text-gray-800 mb-1.5">管理職の立場では</p>
 				<p class="text-sm text-gray-700 leading-relaxed">
 					マネジメントスタイルの見直し、職場の役割分担や権限委譲の見直しなどが考えられます。
-					<b>従業員をまじえた職場環境改善検討会</b>の開催は、アイデアを集めるのに効果的です。
+					従業員をまじえた職場環境改善検討会の開催は、アイデアを収集するのに効果的です。
 				</p>
 			</div>
-			<div class="rounded-lg border-2 border-indigo-200 bg-indigo-50/50 p-4">
-				<p class="text-sm font-bold text-indigo-800 mb-1.5">🏢 経営者・人事労務の立場では</p>
+			<div class="rounded-lg border border-gray-100 bg-gray-50/70 p-4">
+				<p class="text-sm font-bold text-gray-800 mb-1.5">経営者や人事労務の立場では</p>
 				<p class="text-sm text-gray-700 leading-relaxed">
-					全社や事業場レベルで、経営層と従業員とのコミュニケーションのあり方の見直し、
-					CSR方針・行動指針・<b>人事評価制度・人材育成方針</b>の検討などが考えられます。
+					全社や事業場レベルで、経営層と従業員とのコミュニケーションのあり方を見直したり、
+					CSR方針、行動指針、人事評価制度、人材育成方針を検討することなども考えられます。
 				</p>
 			</div>
 		</div>
-		<p class="text-sm text-gray-700 leading-relaxed rounded-lg border border-gray-200 bg-gray-50/70 p-3">
-			🔄 改善策を実施したら、<b>その後もう一度職場を評価し、改善が効果的だったか確認する</b>ことが大事です。
-			うまくいった場合は職場で共有し、不十分な場合はさらに工夫します。
-			日々の業務の中に「計画 → 実行 → 評価 → 改善」のサイクルができると、本当に効果のある対策につながります。
+		<p class="text-sm text-gray-700 leading-relaxed">
+			何らかの改善策が実施されたら、その後再度職場を評価し、改善が効果的になされたかどうか確認することが大事です。
+			うまくいった場合には職場で共有し、改善が十分でない場合にはさらに工夫を考えます。
+			日々の業務の中に「計画－実行－評価－改善」のサイクルがつくられると、本当に効果のある対策へとつながります。
 		</p>
 	</div>
 </div>
