@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { parseCSV, validateCSVData } from '$lib/utils/csvParser';
-	import { userData } from '$lib/stores/dataStore';
+	import { userData, companyName } from '$lib/stores/dataStore';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
@@ -52,6 +52,7 @@
 
 			// ストアにデータを保存
 			userData.set(result.data);
+			companyName.set(result.companyName ?? '');
 			successMessage = `${result.data.length}件のデータを読み込みました`;
 		} catch (err) {
 			error = err instanceof Error ? err.message : '予期しないエラーが発生しました';

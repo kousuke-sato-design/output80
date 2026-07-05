@@ -20,16 +20,25 @@
 		return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
 	}
 	/**
-	 * 印刷（＝PDF保存）。ブラウザの印刷機能はUIをそのまま出力するため、画面と印刷結果がずれない。
-	 * 印刷ダイアログの送信先で「PDFに保存」を選べばPDFになる。
+	 * 印刷・PDF保存はどちらもブラウザの印刷機能を使う（UIをそのまま出力するため画面とずれない）。
+	 * PDF保存はダイアログの送信先で「PDFに保存」を選ぶ。
 	 */
-	async function handlePrint() {
+	let pdfHint = false;
+	async function openPrintDialog() {
 		printing = true;
 		await tick();
 		await new Promise((r) => setTimeout(r, 500));
 		window.print();
 		// afterprint でも戻すが、印刷ダイアログをキャンセルした場合に備えて少し後にも戻す
 		setTimeout(() => (printing = false), 1000);
+	}
+	async function handlePrint() {
+		pdfHint = false;
+		await openPrintDialog();
+	}
+	async function handlePdfSave() {
+		pdfHint = true; // 「送信先でPDFに保存を選ぶ」案内を表示
+		await openPrintDialog();
 	}
 	function handleExcel() {
 		exportOrgExcel($userData, $overallAverage, dateStr());
@@ -52,15 +61,25 @@
 	<div class="flex flex-wrap items-center justify-between gap-3 print:hidden">
 		<div>
 			<h3 class="text-lg font-bold text-gray-900">組織レポート</h3>
-			<p class="text-sm text-gray-600">印刷には表紙／全体図／各プロフィール／グループ比較がすべて含まれます。PDFにするには印刷画面で「PDFに保存」を選んでください</p>
+			<p class="text-sm text-gray-600">
+				印刷・PDFには表紙／全体図／各プロフィール／グループ比較がすべて含まれます（画面と同じ内容がそのまま出力されます）
+				{#if pdfHint}<b class="text-primary-700">PDFにするには、開いた画面の「送信先」で「PDFに保存」を選んでください。</b>{/if}
+			</p>
 		</div>
 		<div class="flex items-center gap-2">
 			<button
 				on:click={handlePrint}
-				class="px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-				title="ブラウザの印刷機能。画面と同じ内容がそのまま出力されます（PDF保存も可）"
+				class="px-4 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+				title="ブラウザの印刷機能で紙に印刷します"
 			>
-				印刷 / PDF保存
+				印刷
+			</button>
+			<button
+				on:click={handlePdfSave}
+				class="px-4 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+				title="印刷画面が開いたら、送信先で「PDFに保存」を選んでください（画面と同じ内容のPDFになります）"
+			>
+				PDF保存
 			</button>
 			<button on:click={handleExcel} class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Excelダウンロード</button>
 		</div>

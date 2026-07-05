@@ -23,10 +23,12 @@ export async function parseCSV(file: File): Promise<UploadResult> {
 				skipEmptyLines: true,
 				complete: (results) => {
 					try {
-						const userData = processCSVData(results.data as string[][]);
+						const rows = results.data as string[][];
+						const userData = processCSVData(rows);
 						resolve({
 							success: true,
-							data: userData
+							data: userData,
+							companyName: extractCompanyName(rows)
 						});
 					} catch (error) {
 						resolve({
@@ -67,6 +69,22 @@ function readFileAsText(file: File, encoding: string = 'UTF-8'): Promise<string>
 		reader.onerror = () => reject(new Error('ファイルの読み込みエラー'));
 		reader.readAsText(file, encoding);
 	});
+}
+
+/**
+ * 「企業名」列の最初の非空値を返す（レポート表紙の企業名初期値に使う）。
+ * 列が無い・全て空なら undefined。
+ */
+function extractCompanyName(data: string[][]): string | undefined {
+	if (data.length < 3) return undefined;
+	const headers = data[1];
+	const idx = headers.findIndex((h) => h && h.trim() === '企業名');
+	if (idx === -1) return undefined;
+	for (let i = 2; i < data.length; i++) {
+		const v = (data[i]?.[idx] || '').trim();
+		if (v) return v;
+	}
+	return undefined;
 }
 
 /**

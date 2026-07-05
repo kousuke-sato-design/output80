@@ -6,6 +6,9 @@ import { getUsersByDepartment } from '$lib/utils/csvParser';
 // アップロードされたユーザーデータ
 export const userData = writable<UserData[]>([]);
 
+// CSVの「企業名」列から取得した企業名（レポート表紙の初期値。画面から編集可）
+export const companyName = writable<string>('');
+
 // 選択中の部署
 export const selectedDepartment = writable<string>('all');
 
@@ -64,5 +67,6 @@ export const overallAverage = derived(userData, ($userData) => {
 // データをリセット
 export function resetData() {
 	userData.set([]);
+	companyName.set('');
 	selectedDepartment.set('all');
 }

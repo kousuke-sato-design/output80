@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { companyName } from '$lib/stores/dataStore';
+
 	export let totalUsers = 0;
 	export let deptCount = 0;
 
-	// 表紙情報（画面で入力→そのまま印刷される。データには保存しない）
-	let companyName = '';
+	// 表紙情報。企業名はCSVの「企業名」列から自動取得（画面で書き換え可）、実施時期は手入力。
 	let periodText = '';
 
 	const today = (() => {
@@ -26,7 +27,7 @@
 			<p class="text-xs font-semibold tracking-widest text-primary-700 mb-0.5">新職業性ストレス簡易調査票（80項目版）フィードバック</p>
 			<div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
 				<input
-					bind:value={companyName}
+					bind:value={$companyName}
 					placeholder="企業・組織名を入力（印刷に反映）"
 					class="text-2xl font-bold text-gray-900 bg-transparent border-b border-dashed border-gray-300 focus:outline-none focus:border-primary-500 min-w-[16rem] print:border-none"
 				/>

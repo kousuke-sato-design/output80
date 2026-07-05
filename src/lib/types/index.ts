@@ -94,6 +94,7 @@ export interface NationalAverage {
 export interface UploadResult {
 	success: boolean;
 	data?: UserData[];
+	companyName?: string; // CSVの「企業名」列から取得（レポート表紙の初期値）
 	error?: string;
 }
 
