@@ -21,20 +21,21 @@ npm run preview    # ビルド結果のローカルプレビュー
 ```
 
 ### 開発の基本方針
-- **開発はローカルで進める**（`npm run dev` で確認）。push やデプロイは行わない
-- **デプロイはユーザーが明確に指示したときのみ**実行する。勝手に commit/push/deploy しないこと
+- **検証済みの変更は毎回そのままデプロイする**（ユーザー常時指示 2026-07-05「毎回デプロイしてくれ」）。
+  feature ブランチでコミット → ローカルで動作検証 → main へ ff-merge → `git push origin main` → 本番反映確認まで一気に行う
+- 検証（ビルド＋実データでの目視確認）を通っていない変更は push しない
 - **DBは使用しない**。データはCSVアップロード→ブラウザメモリ上で処理する完全クライアントサイド構成（永続化なし・サーバー送信なし）
 
-### デプロイ（Vercel — ユーザー指示時のみ）
+### デプロイ（Vercel）
 - 本番URL: https://output80.vercel.app
 - Vercelプロジェクト: `sougoushinris-projects/output80`（CLIリンク済み・ログイン済み）
 - `main` ブランチへ push すると Vercel が自動で本番デプロイ（2〜3分）
 - 手動デプロイ: `vercel build`（本番ビルド再現）/ `vercel --prod`（本番）/ `vercel deploy`（プレビュー）
 
-### 作業フロー（ローカル）
-1. feature ブランチを切って作業・コミット（main直コミットは避ける）
-2. `npm run dev` で動作確認 / `npm run build` でビルドが通ることを確認
-3. ここで一旦停止。**デプロイ指示があれば** main に ff-merge → `git push origin main`
+### 作業フロー
+1. feature ブランチを切って作業・コミット（main直コミットは避ける。pre-commit hook が強制）
+2. `npm run build` ＋ dev サーバーで実データ目視確認（検証必須）
+3. main に ff-merge → `git push origin main` → `/_app/version.json` の変化で本番反映を確認（毎回自動で行う）
 
 ### 設定ファイル
 - `vercel.json` — framework=sveltekit / region=hnd1（東京）
