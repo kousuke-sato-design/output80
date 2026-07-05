@@ -9,8 +9,9 @@ import type { ScoreData } from '$lib/types';
  * - No1〜57 は旧57項目版そのもの（A:仕事17 / B:心身29 / C:サポート9 / D:満足2）。
  * - No58〜80 は短縮版（各尺度ほぼ1項目）。順序は Inoue & Kawakami (2014, Industrial Health 52:535)
  *   Table 1 の推奨尺度セット順 ＝ 同梱 80sample.xls「基準点」シートの尺度順 と一致（全国平均値で照合・確定）。
- * - 採点は公式同様「高得点ほど良好な状態」に揃える（負担・ハラスメントは設問の向きにより逆転なしで高=軽度=良好、
- *   資源・いきいきは reverse() で高=良好）。
+ * - 採点は公式「得点計算法」(2012/4/1公開・2017/5/8修正) どおり「高得点ほど良好な状態」に揃える。
+ *   逆転の有無は尺度単位ではなく**設問文の向き（ネガ文言=逆転なし／ポジ文言=逆転）**で決まる点に注意。
+ *   例: 項目11「技能や知識を使うことが少ない」(ネガ)=逆転なし、項目14「雰囲気は友好的」(ポジ)=逆転。
  *
  * 【未回答（空白）の扱い・重要】
  * - 未回答項目（1〜4以外＝空白/範囲外）は、その尺度の平均から**除外**する（0として混ぜない）。
@@ -57,13 +58,26 @@ export function calculateScores(
 	const quantitativeLoad = scale(false, 1, 2, 3); // 仕事の量的負担
 	const qualitativeLoad = scale(false, 4, 5, 6); // 仕事の質的負担
 	const physicalLoad = scale(false, 7); // 身体的負担度
-	const interpersonalRelations = scale(false, 12, 13, 14); // 職場での対人関係
+	// 職場での対人関係＝(12+13+(5-14))/3。公式得点計算法では 12「意見のくい違い」13「うまが合わない」は
+	// 1点2点3点4点（逆転なし）、14「職場の雰囲気は友好的である」のみ 4点3点2点1点（逆転）。
+	const interpersonalRelations = (() => {
+		const vals: number[] = [];
+		for (const n of [12, 13]) {
+			const v = raw(n);
+			if (v !== null) vals.push(v);
+		}
+		const v14 = raw(14);
+		if (v14 !== null) vals.push(5 - v14);
+		return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : NaN;
+	})();
 	const workplaceEnvironment = scale(false, 15); // 職場環境
 
-	// B. 仕事の資源（作業レベル）：reverse で高得点=良好
+	// B. 仕事の資源（作業レベル）：ポジ文言は reverse で高得点=良好
 	const jobControl = scale(true, 8, 9, 10); // 仕事のコントロール
 	const jobFitness = scale(true, 16); // 仕事の適性
-	const skillUtilization = scale(true, 11); // 技能の活用
+	// 技能の活用：設問11「自分の技能や知識を仕事で使うことが少ない」はネガ文言のため
+	// 公式得点計算法では 1点2点3点4点（逆転なし）。高得点=使うことが「ちがう」=活用できている=良好。
+	const skillUtilization = scale(false, 11); // 技能の活用
 	const jobSignificance = scale(true, 17); // 仕事の意義（働きがい：A17）
 
 	// E. いきいきアウトカム／F. 心身の健康（No18〜46）。すべて「高得点=良好」に揃える。
