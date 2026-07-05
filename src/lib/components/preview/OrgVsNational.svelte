@@ -103,9 +103,9 @@
 			バーが<b class="bg-green-100 text-green-800 px-1 rounded">右（緑）＝全国より良好</b>、
 			<b class="bg-red-100 text-red-800 px-1 rounded">左（赤）＝要改善</b>です。
 		</p>
-		<div class="space-y-2">
+		<div>
 			{#each totals as t, i}
-				<div class="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-2 py-1.5">
+				<div class="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-2 px-3 py-2 rounded-lg odd:bg-gray-50/80 hover:bg-blue-50/40 transition-colors">
 					<span class="flex items-center gap-1.5 text-sm font-semibold text-gray-800 w-56 flex-shrink-0 leading-tight">
 						<span class="inline-block w-2.5 h-2.5 rounded-sm {totalDots[i]} flex-shrink-0"></span>{t.label}
 					</span>
@@ -150,7 +150,7 @@
 			</p>
 			<div>
 				{#each sec.rows as r}
-					<div class="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-2 py-2.5 border-b border-gray-100 last:border-b-0">
+					<div class="flex flex-wrap md:flex-nowrap items-center gap-x-4 gap-y-2 px-3 py-2.5 rounded-lg odd:bg-gray-50/80 hover:bg-blue-50/40 transition-colors">
 						<div class="leading-snug min-w-[15rem] flex-1">
 							<p class="flex items-center gap-1.5 text-sm font-semibold text-gray-900">
 								<span class="inline-block w-2.5 h-2.5 rounded-sm {sec.dot} flex-shrink-0"></span>{r.label}
