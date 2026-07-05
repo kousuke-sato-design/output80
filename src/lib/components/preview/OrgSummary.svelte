@@ -39,7 +39,7 @@
 	<!-- ベータ版バナー（画面・印刷共通で目立たせる） -->
 	<div class="flex flex-wrap items-center gap-x-3 gap-y-1 bg-amber-50 border border-amber-300 rounded-lg px-3 py-1.5 mb-3">
 		<span class="text-[11px] font-bold tracking-wider bg-amber-400 text-amber-950 rounded px-2 py-0.5">BETA版</span>
-		<span class="text-xs text-amber-800 font-medium">本レポートはベータ版システムによる出力です。数値・表示内容は検証中のため、今後変更される場合があります。</span>
+		<span class="text-sm text-amber-800 font-medium">本レポートはベータ版システムによる出力です。数値・表示内容は検証中のため、今後変更される場合があります。</span>
 	</div>
 	<!-- 表紙ヘッダー -->
 	<div class="flex flex-wrap items-start justify-between gap-3 pb-3 border-b-2 border-primary-600">
@@ -91,7 +91,7 @@
 					</div>
 				{/each}
 			</div>
-			<p class="text-[10px] text-gray-400 mt-2 leading-tight">判定A〜D＝4領域合計の全国比（SD換算）の平均。◎良好/○やや良好/−平均的/△やや注意/⚠要対策（±0.15SD・±0.5SDで区分）</p>
+			<p class="text-xs text-gray-500 mt-2 leading-snug">判定A〜D＝4領域合計の全国比（SD換算）の平均。◎良好/○やや良好/−平均的/△やや注意/⚠要対策（±0.15SD・±0.5SDで区分）</p>
 		</div>
 
 		<!-- 強みTOP3 -->
@@ -110,7 +110,7 @@
 					{/each}
 				</ol>
 			{/if}
-			<p class="text-[10px] text-gray-400 mt-2">全国平均との差（＋が大きい順）。この強みを維持・活用します</p>
+			<p class="text-xs text-gray-500 mt-2">全国平均との差（＋が大きい順）。この強みを維持・活用します</p>
 		</div>
 
 		<!-- 優先課題TOP3 -->
@@ -129,13 +129,13 @@
 					{/each}
 				</ol>
 			{/if}
-			<p class="text-[10px] text-gray-400 mt-2">全国平均との差（−が大きい順）。優先的な対策を検討します</p>
+			<p class="text-xs text-gray-500 mt-2">全国平均との差（−が大きい順）。優先的な対策を検討します</p>
 		</div>
 	</div>
 
 	<!-- 調査票について -->
-	<p class="text-[11px] text-gray-500 leading-relaxed mt-4 pt-3 border-t border-gray-100">
-		<b class="text-gray-700">この調査について：</b>{SURVEY_ABOUT}
+	<p class="text-sm text-gray-600 leading-relaxed mt-4 pt-3 border-t border-gray-100">
+		<b class="text-gray-800">この調査について：</b>{SURVEY_ABOUT}
 		各尺度のくわしい意味は巻末の「用語解説」をご覧ください。
 	</p>
 </div>

@@ -15,24 +15,24 @@
 <!-- 用語解説（公式「推奨尺度の説明」準拠） -->
 <div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 print:break-before-page">
 	<h4 class="text-base font-semibold text-gray-900 mb-1">用語解説（各尺度の意味）</h4>
-	<p class="text-xs text-gray-500 leading-relaxed mb-3">{SURVEY_ABOUT}</p>
+	<p class="text-sm text-gray-600 leading-relaxed mb-3">{SURVEY_ABOUT}</p>
 
 	<div class="grid md:grid-cols-2 gap-x-8 gap-y-3">
 		{#each groups as grp}
 			<div class="break-inside-avoid">
 				<div class="border-b-2 border-primary-200 pb-1 mb-2">
-					<span class="text-sm font-bold text-primary-700">{grp.group}</span>
-					{#if grp.desc}<span class="text-[11px] text-gray-500 ml-2">{grp.desc}</span>{/if}
+					<span class="text-base font-bold text-primary-700">{grp.group}</span>
+					{#if grp.desc}<span class="text-xs text-gray-500 ml-2">{grp.desc}</span>{/if}
 				</div>
-				<dl class="space-y-1.5">
+				<dl class="space-y-2">
 					{#each grp.rows as s}
 						{@const d = SCALE_DESCRIPTIONS[s.field]}
-						<div class="grid grid-cols-[7.5rem,1fr] gap-2 text-xs leading-snug">
+						<div class="grid grid-cols-[8rem,1fr] gap-2 text-sm leading-snug">
 							<dt class="font-semibold text-gray-800">{s.label}</dt>
 							<dd class="text-gray-600">
 								{d?.desc ?? ''}
 								{#if d?.example}
-									<span class="block text-gray-400 mt-0.5">設問例「{d.example}」</span>
+									<span class="block text-xs text-gray-400 mt-0.5">設問例「{d.example}」</span>
 								{/if}
 							</dd>
 						</div>
@@ -44,13 +44,13 @@
 		<!-- 対策領域別合計 -->
 		<div class="break-inside-avoid">
 			<div class="border-b-2 border-primary-200 pb-1 mb-2">
-				<span class="text-sm font-bold text-primary-700">対策領域別合計（4領域）</span>
-				<span class="text-[11px] text-gray-500 ml-2">構成する尺度得点の平均。対策の優先領域を見るための指標</span>
+				<span class="text-base font-bold text-primary-700">対策領域別合計（4領域）</span>
+				<span class="text-xs text-gray-500 ml-2">構成する尺度得点の平均。対策の優先領域を見るための指標</span>
 			</div>
-			<dl class="space-y-1.5">
+			<dl class="space-y-2">
 				{#each totals as s}
 					{@const d = SCALE_DESCRIPTIONS[s.field]}
-					<div class="grid grid-cols-[7.5rem,1fr] gap-2 text-xs leading-snug">
+					<div class="grid grid-cols-[8rem,1fr] gap-2 text-sm leading-snug">
 						<dt class="font-semibold text-gray-800">{s.label.replace('(合計)', '')}</dt>
 						<dd class="text-gray-600">{d?.desc ?? ''}</dd>
 					</div>
@@ -59,5 +59,5 @@
 		</div>
 	</div>
 
-	<p class="text-[10px] text-gray-400 mt-3 pt-2 border-t border-gray-100 leading-relaxed">{SOURCE_NOTE}</p>
+	<p class="text-xs text-gray-500 mt-3 pt-2 border-t border-gray-100 leading-relaxed">{SOURCE_NOTE}</p>
 </div>

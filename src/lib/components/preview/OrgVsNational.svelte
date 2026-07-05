@@ -79,7 +79,7 @@
 					<div class="col-span-3 leading-tight">
 						<span class="text-gray-700 break-words" title={h.label}>{h.label}</span>
 						{#if SCALE_DESCRIPTIONS[h.field]}
-							<span class="block text-[10px] text-gray-400 leading-tight">{SCALE_DESCRIPTIONS[h.field]?.desc}</span>
+							<span class="block text-xs text-gray-500 leading-snug">{SCALE_DESCRIPTIONS[h.field]?.desc}</span>
 						{/if}
 					</div>
 					<div class="col-span-1 text-right font-semibold text-gray-900 tabular-nums">{fmt(h.org)}</div>
@@ -107,25 +107,39 @@
 				</div>
 			{/each}
 		</div>
-		<p class="text-xs text-gray-400 mt-2">バーは「全国平均（中央線）からの差」。右(緑)＝全国より良好／左(赤)＝要改善。全尺度 高得点ほど良好。判定は全国比のSD換算（◎○＝良好側、△⚠＝注意側、−＝平均的）。</p>
+		<p class="text-sm text-gray-500 mt-2">バーは「全国平均（中央線）からの差」。右(緑)＝全国より良好／左(赤)＝要改善。全尺度 高得点ほど良好。判定は全国比のSD換算（◎○＝良好側、△⚠＝注意側、−＝平均的）。</p>
 	</div>
 
-	<!-- このレポートの見方（活用ステップ） -->
+	<!-- このレポートの見方（数値の見方＋活用ステップ） -->
 	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
-		<h4 class="text-base font-semibold text-gray-900 mb-1">このレポートの見方</h4>
-		<p class="text-sm text-gray-600 mb-3">
-			「健康いきいき職場」モデルに基づき、組織全体の平均値を全国平均（参考値）と比較しています。得点は1〜4点で、<b class="text-gray-800">すべて高いほど良好</b>な状態を示すよう変換しています。
-		</p>
+		<h4 class="text-base font-semibold text-gray-900 mb-2">このレポートの見方</h4>
+
+		<!-- 数値の見方（公式FBサンプル「このフィードバックの見方」準拠） -->
+		<div class="grid sm:grid-cols-3 gap-3 mb-4">
+			<div class="rounded-lg border-2 border-primary-200 bg-primary-50/50 p-3">
+				<p class="text-sm font-bold text-primary-800 mb-1">📏 得点は1〜4点</p>
+				<p class="text-sm text-gray-700 leading-relaxed">最高4点・最低1点になるよう変換しています。設問数の違いに関係なく、どの尺度も同じものさしで比べられます。</p>
+			</div>
+			<div class="rounded-lg border-2 border-green-200 bg-green-50/50 p-3">
+				<p class="text-sm font-bold text-green-800 mb-1">⬆ すべて高いほど良好</p>
+				<p class="text-sm text-gray-700 leading-relaxed">数字はすべて「高い方が好ましい状態」を示すよう変換済み。負担系の尺度も、高得点＝負担が少ない＝良好です。</p>
+			</div>
+			<div class="rounded-lg border-2 border-amber-200 bg-amber-50/50 p-3">
+				<p class="text-sm font-bold text-amber-800 mb-1">🇯🇵 全国平均と比較</p>
+				<p class="text-sm text-gray-700 leading-relaxed">全国の労働者を対象とした調査に基づく標準データ（基準点 N≒1620・参考値）と比べて、貴組織の特徴を知ることができます。</p>
+			</div>
+		</div>
+
 		<ol class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-1 list-none p-0 m-0">
 			{#each [
-				{ n: 'STEP 1', t: 'いきいきプロフィール全体図で、組織のいきいきの位置を確認' },
+				{ n: 'STEP 1', t: 'いきいきプロフィール全体図で、個人と職場のいきいきの位置を確認' },
 				{ n: 'STEP 2', t: '4領域バランス（レーダー）で、注目すべき対策領域を確認' },
-				{ n: 'STEP 3', t: '領域サマリー・尺度プロフィールで、個別の強み・弱みを確認' },
-				{ n: 'STEP 4', t: '強みをのばし、弱みを補強する改善方策を考える' }
+				{ n: 'STEP 3', t: '領域サマリー・尺度プロフィールで、傾向の原因となっている個別の要因を確認' },
+				{ n: 'STEP 4', t: '強みをのばすか、弱みを補強する改善方策を考える' }
 			] as step}
 				<li class="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
-					<span class="inline-block text-[10px] font-bold tracking-wider text-primary-700 bg-primary-50 rounded px-1.5 py-0.5 mb-1">{step.n}</span>
-					<p class="text-xs text-gray-700 leading-relaxed">{step.t}</p>
+					<span class="inline-block text-xs font-bold tracking-wider text-primary-700 bg-primary-50 rounded px-1.5 py-0.5 mb-1">{step.n}</span>
+					<p class="text-sm text-gray-700 leading-relaxed">{step.t}</p>
 				</li>
 			{/each}
 		</ol>
@@ -136,7 +150,7 @@
 	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid print:break-before-page">
 		<h4 class="text-base font-semibold text-gray-900 mb-2">尺度プロフィール（全42尺度・全国平均との比較）</h4>
 		<!-- 凡例：棒・縦線・数値が何を表すか -->
-		<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 mb-3 border border-gray-100 rounded-lg p-2 bg-gray-50">
+		<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mb-3 border border-gray-100 rounded-lg p-2 bg-gray-50">
 			<span class="flex items-center gap-1"><span class="inline-block w-4 h-2.5 bg-green-500 rounded-sm"></span><b class="text-green-700">緑＝全国より良好</b>（縦線から右）</span>
 			<span class="flex items-center gap-1"><span class="inline-block w-4 h-2.5 bg-red-500 rounded-sm"></span><b class="text-red-700">赤＝要改善</b>（縦線から左）</span>
 			<span class="flex items-center gap-1"><span class="inline-block w-[2px] h-3.5 bg-gray-800"></span>縦線＝<b class="text-gray-800">全国平均</b></span>
@@ -146,9 +160,9 @@
 			{#each profileByGroup as grp}
 				<div class="break-inside-avoid">
 					<div class="border-b border-gray-200 pb-1 mb-1 mt-2 leading-tight">
-						<span class="text-xs font-bold text-primary-700">{grp.group}</span>
+						<span class="text-sm font-bold text-primary-700">{grp.group}</span>
 						{#if GROUP_DESCRIPTIONS[grp.group]}
-							<span class="text-[10px] text-gray-400 ml-1.5">{GROUP_DESCRIPTIONS[grp.group]}</span>
+							<span class="text-xs text-gray-500 ml-1.5">{GROUP_DESCRIPTIONS[grp.group]}</span>
 						{/if}
 					</div>
 					{#each grp.rows as r}
@@ -177,5 +191,34 @@
 				</div>
 			{/each}
 		</div>
+	</div>
+
+	<!-- 結果から改善へ（公式FBサンプル準拠の活用ガイド） -->
+	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
+		<h4 class="text-base font-semibold text-gray-900 mb-1">結果から改善へ — このレポートの活かし方</h4>
+		<p class="text-sm text-gray-600 leading-relaxed mb-3">
+			プロフィールから職場の強みや弱み（問題点）を把握したら、<b class="text-gray-800">強みをのばす対策</b>と<b class="text-gray-800">問題点を補強する対策</b>を考えます。
+		</p>
+		<div class="grid md:grid-cols-2 gap-3 mb-3">
+			<div class="rounded-lg border-2 border-sky-200 bg-sky-50/50 p-4">
+				<p class="text-sm font-bold text-sky-800 mb-1.5">👥 管理職の立場では</p>
+				<p class="text-sm text-gray-700 leading-relaxed">
+					マネジメントスタイルの見直し、職場の役割分担や権限委譲の見直しなどが考えられます。
+					<b>従業員をまじえた職場環境改善検討会</b>の開催は、アイデアを集めるのに効果的です。
+				</p>
+			</div>
+			<div class="rounded-lg border-2 border-indigo-200 bg-indigo-50/50 p-4">
+				<p class="text-sm font-bold text-indigo-800 mb-1.5">🏢 経営者・人事労務の立場では</p>
+				<p class="text-sm text-gray-700 leading-relaxed">
+					全社や事業場レベルで、経営層と従業員とのコミュニケーションのあり方の見直し、
+					CSR方針・行動指針・<b>人事評価制度・人材育成方針</b>の検討などが考えられます。
+				</p>
+			</div>
+		</div>
+		<p class="text-sm text-gray-700 leading-relaxed rounded-lg border border-gray-200 bg-gray-50/70 p-3">
+			🔄 改善策を実施したら、<b>その後もう一度職場を評価し、改善が効果的だったか確認する</b>ことが大事です。
+			うまくいった場合は職場で共有し、不十分な場合はさらに工夫します。
+			日々の業務の中に「計画 → 実行 → 評価 → 改善」のサイクルができると、本当に効果のある対策につながります。
+		</p>
 	</div>
 </div>

@@ -118,11 +118,11 @@
 		<!-- レポート奥付（ベータ版表記・作成提供元） -->
 		<div data-pdf-block class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 break-inside-avoid">
 			<div class="flex flex-wrap items-center justify-between gap-2">
-				<p class="text-xs text-amber-800">
+				<p class="text-sm text-amber-800">
 					<span class="font-bold tracking-wider bg-amber-400 text-amber-950 rounded px-1.5 py-0.5 mr-2">BETA版</span>
 					本レポートはベータ版システムによる出力です。数値・表示内容は検証中のため、今後変更される場合があります。
 				</p>
-				<p class="text-xs font-semibold text-gray-700">作成・提供：株式会社総合心理教育研究所</p>
+				<p class="text-sm font-semibold text-gray-700">作成・提供：株式会社総合心理教育研究所</p>
 			</div>
 		</div>
 	</div>
