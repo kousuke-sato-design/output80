@@ -42,10 +42,10 @@
 	<div class="mx-5 mt-4 rounded-lg border border-gray-100 bg-gray-50/70 p-4">
 		<h5 class="text-sm font-bold text-gray-800 mb-1.5">「いきいき」とは</h5>
 		<p class="text-sm text-gray-700 leading-relaxed">
-			この調査では、健康の保持・増進に加えて<b>従業員のいきいき（個人の活力）</b>と<b>職場のいきいき（職場の一体感）</b>を高める「健康いきいき職場」づくりを目標にしています。
-			<b>個人のいきいき＝ワーク・エンゲイジメント</b>（仕事から活力を得て、仕事に誇りを感じている状態）、
-			<b>職場のいきいき＝職場の一体感</b>（お互いに理解し認め合い、助け合って業務を遂行している状態）で測ります。
-			仕事の<b>負担</b>は心身の健康に、仕事の<b>資源</b>は個人と組織の活性化につながります。
+			この調査では、健康の保持・増進に加えて従業員と職場の「いきいき」を高める「健康いきいき職場」づくりを目標にしています。
+			<b class="bg-emerald-100 text-emerald-900 px-1 rounded">個人のいきいき＝ワーク・エンゲイジメント</b>（仕事から活力を得て、仕事に誇りを感じている状態）、
+			<b class="bg-emerald-100 text-emerald-900 px-1 rounded">職場のいきいき＝職場の一体感</b>（お互いに理解し認め合い、助け合って業務を遂行している状態）で測ります。
+			仕事の<b class="bg-amber-100 text-amber-900 px-1 rounded">負担</b>は心身の健康に、仕事の<b class="bg-sky-100 text-sky-900 px-1 rounded">資源</b>は個人と組織の活性化につながります。
 		</p>
 	</div>
 
@@ -64,8 +64,8 @@
 				/>
 			</div>
 			<figcaption class="text-sm text-gray-600 leading-relaxed mt-2">
-				<b>見方：</b>縦軸＝個人のいきいき、横軸＝職場のいきいき。青が当組織、オレンジが全国平均です。
-				<b>右上にあるほど個人も職場もいきいきした状態</b>。全国平均より左下にある場合は、活性化の余地があります。<br />
+				<b>見方：</b>縦軸＝個人のいきいき、横軸＝職場のいきいき。<b class="bg-blue-100 text-blue-900 px-1 rounded">青が当組織</b>、<b class="bg-amber-100 text-amber-900 px-1 rounded">オレンジが全国平均</b>です。
+				<b class="bg-yellow-100 text-gray-900 px-1 rounded">右上にあるほど個人も職場もいきいきした状態</b>。全国平均より左下にある場合は、活性化の余地があります。<br />
 				当組織：ワーク・エンゲイジメント {fmtV(v(overallAverage, 'workEngagement'))}（全国 {fmtV(nat('workEngagement'))}）／
 				職場の一体感 {fmtV(v(overallAverage, 'workplaceUnity'))}（全国 {fmtV(nat('workplaceUnity'))}）
 			</figcaption>
@@ -81,8 +81,8 @@
 				<VitalityRadar labels={radarLabels} orgData={radarOrg} nationalData={radarNat} />
 			</div>
 			<figcaption class="text-sm text-gray-600 leading-relaxed mt-2">
-				<b>見方：</b>4つの頂点は対策領域別の合計点（構成尺度の平均）。<b>外側に広がっているほど良好</b>です
-				（「仕事の負担」は負担の少なさを表します）。全国平均の線より内側にへこんでいる領域が、注目すべき対策領域です。
+				<b>見方：</b>4つの頂点は対策領域別の合計点（構成尺度の平均）。<b class="bg-yellow-100 text-gray-900 px-1 rounded">外側に広がっているほど良好</b>です
+				（「仕事の負担」は負担の少なさを表します）。<b class="bg-red-100 text-red-800 px-1 rounded">全国平均の線より内側にへこんでいる領域</b>が、注目すべき対策領域です。
 			</figcaption>
 		</figure>
 	</div>

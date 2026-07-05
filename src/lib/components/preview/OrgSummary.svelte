@@ -63,8 +63,8 @@
 	<div class="rounded-lg border border-gray-100 bg-gray-50/70 p-4 mt-3">
 		<h5 class="text-sm font-bold text-gray-800 mb-1.5">このレポートの見方</h5>
 		<p class="text-sm text-gray-700 leading-relaxed mb-3">
-			本レポートでは、組織全体の平均値を全国平均（参考値・基準データ N≒1620）と比較しています。
-			得点は最高4点・最低1点になるよう変換されており、<b class="text-gray-900">数字はすべて高い方が好ましい状態</b>を示します
+			本レポートでは、<b class="bg-blue-100 text-blue-900 px-1 rounded">当組織の平均値</b>を<b class="bg-amber-100 text-amber-900 px-1 rounded">全国平均</b>（参考値・基準データ N≒1620）と比較しています。
+			得点は最高4点・最低1点になるよう変換されており、<b class="bg-yellow-100 text-gray-900 px-1 rounded">数字はすべて高い方が好ましい状態</b>を示します
 			（「仕事の負担」などの尺度も、高得点＝負担が少ない＝良好です）。
 		</p>
 		<ol class="grid sm:grid-cols-2 lg:grid-cols-4 gap-2 list-none p-0 m-0">
