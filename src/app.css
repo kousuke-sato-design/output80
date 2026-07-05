@@ -33,4 +33,39 @@
 		margin: 1.2cm;
 		size: A4;
 	}
+
+	/* 入力欄（社名・実施時期など）は枠線を消して普通の文字として印刷する */
+	input,
+	select,
+	textarea {
+		border: none !important;
+		background: transparent !important;
+		box-shadow: none !important;
+	}
+	input::placeholder {
+		color: transparent !important;
+	}
+
+	/* 表：ヘッダー行を各ページで繰り返し、行の途中で改ページしない */
+	thead {
+		display: table-header-group;
+	}
+	tr {
+		break-inside: avoid;
+	}
+
+	/* グループ比較の一覧表を1ページ幅に収める */
+	.matrix-print table {
+		font-size: 10px;
+	}
+	.matrix-print th,
+	.matrix-print td {
+		padding: 2px 4px !important;
+		white-space: normal !important;
+	}
+
+	/* リンクのURL表示を抑止 */
+	a[href]::after {
+		content: none !important;
+	}
 }

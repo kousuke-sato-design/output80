@@ -22,10 +22,11 @@
 						/>
 					</svg>
 					<div>
-						<h1 class="text-xl font-bold text-gray-900">
+						<h1 class="text-xl font-bold text-gray-900 flex items-center gap-2">
 							新職業性ストレス簡易調査票
+							<span class="text-[10px] font-bold tracking-wider bg-amber-400 text-amber-950 rounded px-1.5 py-0.5">BETA版</span>
 						</h1>
-						<p class="text-xs text-gray-500">フィードバックシステム</p>
+						<p class="text-xs text-gray-500">フィードバックシステム｜作成・提供：株式会社総合心理教育研究所</p>
 					</div>
 				</a>
 

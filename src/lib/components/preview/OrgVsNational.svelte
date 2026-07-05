@@ -2,6 +2,8 @@
 	import type { ScoreData } from '$lib/types';
 	import { HEADLINE_FIELDS, SCALES, PROFILE_GROUP_ORDER, type ScaleField } from '$lib/data/scaleMeta';
 	import { orgVsNational, type ScaleVsNational, type CellColor } from '$lib/utils/orgMatrix';
+	import { rateByZ } from '$lib/utils/rating';
+	import { SCALE_DESCRIPTIONS, GROUP_DESCRIPTIONS } from '$lib/data/scaleDescriptions';
 	import OrgVitality from './OrgVitality.svelte';
 
 	export let overallAverage: ScoreData | null;
@@ -39,8 +41,9 @@
 	function fmt(v: number | null): string {
 		return v === null ? '—' : v.toFixed(2);
 	}
+	// ▲▼付きの全国比（白黒印刷でも向きが分かるようにする）
 	function fmtDiff(v: number | null): string {
-		return v === null ? '—' : `${v >= 0 ? '+' : ''}${v.toFixed(2)}`;
+		return v === null ? '—' : v >= 0 ? `▲+${v.toFixed(2)}` : `▼${v.toFixed(2)}`;
 	}
 	// 1〜4スケールを0-100%に（棒グラフ用）
 	function scalePct(v: number | null): number {
@@ -63,18 +66,25 @@
 		<div class="grid grid-cols-12 items-center gap-2 text-[11px] text-gray-400 mb-1 pb-1 border-b border-gray-100">
 			<div class="col-span-3">指標</div>
 			<div class="col-span-1 text-right">組織値</div>
-			<div class="col-span-6 flex justify-between px-1">
+			<div class="col-span-5 flex justify-between px-1">
 				<span>◀ 要改善</span><span class="font-medium text-gray-500">｜全国平均</span><span>良好 ▶</span>
 			</div>
 			<div class="col-span-2 text-right">全国比</div>
+			<div class="col-span-1 text-right">判定</div>
 		</div>
 		<div class="space-y-2">
 			{#each headline as h}
+				{@const rating = rateByZ(h.z)}
 				<div class="grid grid-cols-12 items-center gap-2 text-sm">
-					<div class="col-span-3 text-gray-700 leading-tight break-words" title={h.label}>{h.label}</div>
+					<div class="col-span-3 leading-tight">
+						<span class="text-gray-700 break-words" title={h.label}>{h.label}</span>
+						{#if SCALE_DESCRIPTIONS[h.field]}
+							<span class="block text-[10px] text-gray-400 leading-tight">{SCALE_DESCRIPTIONS[h.field]?.desc}</span>
+						{/if}
+					</div>
 					<div class="col-span-1 text-right font-semibold text-gray-900 tabular-nums">{fmt(h.org)}</div>
 					<!-- 全国比 ダイバージングバー -->
-					<div class="col-span-6">
+					<div class="col-span-5">
 						<div class="relative h-3 bg-gray-100 rounded">
 							<div class="absolute top-0 bottom-0 left-1/2 w-px bg-gray-400"></div>
 							{#if h.z !== null}
@@ -86,13 +96,18 @@
 							{/if}
 						</div>
 					</div>
-					<div class="col-span-2 text-xs {colorText[h.color]} tabular-nums">
-						全国比 {fmtDiff(h.diff)}
+					<div class="col-span-2 text-xs {colorText[h.color]} tabular-nums text-right">
+						{fmtDiff(h.diff)}
+					</div>
+					<div class="col-span-1 text-right">
+						{#if rating}
+							<span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap {rating.badge}" title="全国比{h.z?.toFixed(2)}SD">{rating.symbol}{rating.label}</span>
+						{/if}
 					</div>
 				</div>
 			{/each}
 		</div>
-		<p class="text-xs text-gray-400 mt-2">バーは「全国平均（中央線）からの差」。右(緑)＝全国より良好／左(赤)＝要改善。全尺度 高得点ほど良好。</p>
+		<p class="text-xs text-gray-400 mt-2">バーは「全国平均（中央線）からの差」。右(緑)＝全国より良好／左(赤)＝要改善。全尺度 高得点ほど良好。判定は全国比のSD換算（◎○＝良好側、△⚠＝注意側、−＝平均的）。</p>
 	</div>
 
 	<!-- このレポートの見方（活用ステップ） -->
@@ -118,7 +133,7 @@
 	</div>
 
 	<!-- 全尺度プロフィール -->
-	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
+	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid print:break-before-page">
 		<h4 class="text-base font-semibold text-gray-900 mb-2">尺度プロフィール（全42尺度・全国平均との比較）</h4>
 		<!-- 凡例：棒・縦線・数値が何を表すか -->
 		<div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 mb-3 border border-gray-100 rounded-lg p-2 bg-gray-50">
@@ -130,7 +145,12 @@
 		<div class="grid md:grid-cols-2 gap-x-8 gap-y-1">
 			{#each profileByGroup as grp}
 				<div class="break-inside-avoid">
-					<div class="text-xs font-bold text-primary-700 border-b border-gray-200 pb-1 mb-1 mt-2">{grp.group}</div>
+					<div class="border-b border-gray-200 pb-1 mb-1 mt-2 leading-tight">
+						<span class="text-xs font-bold text-primary-700">{grp.group}</span>
+						{#if GROUP_DESCRIPTIONS[grp.group]}
+							<span class="text-[10px] text-gray-400 ml-1.5">{GROUP_DESCRIPTIONS[grp.group]}</span>
+						{/if}
+					</div>
 					{#each grp.rows as r}
 						<div class="flex items-center gap-2 text-sm py-0.5">
 							<span class="text-gray-700 w-28 flex-shrink-0 leading-tight break-words" title={r.label}>{r.label}</span>
