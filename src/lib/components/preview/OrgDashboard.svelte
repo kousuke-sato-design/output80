@@ -39,6 +39,7 @@
 		if (!reportEl || pdfLoading) return;
 		pdfLoading = true;
 		printing = true; // 全セクションをレンダリング
+		document.body.classList.add('pdf-exporting'); // 一覧表のスクロール展開・スクロールバー非表示
 		try {
 			await tick();
 			await new Promise((r) => setTimeout(r, 600));
@@ -47,6 +48,7 @@
 			console.error('PDF生成エラー:', e);
 			alert('PDFの生成に失敗しました。「印刷」から「PDFに保存」もご利用いただけます。');
 		} finally {
+			document.body.classList.remove('pdf-exporting');
 			printing = false;
 			pdfLoading = false;
 		}

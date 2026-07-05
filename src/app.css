@@ -8,6 +8,19 @@
 	}
 }
 
+/* PDF書き出し中（html-to-image キャプチャ）専用:
+   横スクロールの一覧表を全列展開して写し、スクロールバーの写り込みを防ぐ */
+.pdf-exporting *::-webkit-scrollbar {
+	display: none !important;
+}
+.pdf-exporting .matrix-card {
+	width: max-content !important;
+	max-width: none !important;
+}
+.pdf-exporting .matrix-card .matrix-print {
+	overflow: visible !important;
+}
+
 /* 印刷用スタイル */
 @media print {
 	.page-break {

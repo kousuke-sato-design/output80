@@ -79,7 +79,7 @@
 		{/if}
 	</div>
 
-	<div data-pdf-block class="bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
+	<div data-pdf-block class="matrix-card bg-white rounded-lg shadow-sm p-4 break-inside-avoid">
 		<h4 class="text-base font-semibold text-gray-900 mb-3">主要指標 一覧（{axisLabel[axis] ?? axis} × 指標）</h4>
 		<OrgMatrixTable {rows} columns={MAIN_SCALES} />
 	</div>

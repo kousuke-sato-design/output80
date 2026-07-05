@@ -5,19 +5,27 @@ import { jsPDF } from 'jspdf';
  * ブロックを画像化する。
  * html-to-image は SVG foreignObject 経由で「ブラウザ自身の描画」をそのまま画像化するため、
  * 画面とPDFがずれない（html2canvas は独自再描画のため丸・入力欄がずれる問題があり廃止）。
+ * 描画時にフォントの行送りがわずかに太って最下行が見切れることがあるため、
+ * キャプチャの間だけ下端に余白を足して逃がす。
  */
 async function capture(el: HTMLElement): Promise<HTMLCanvasElement> {
-	return toCanvas(el, {
-		pixelRatio: 2,
-		backgroundColor: '#ffffff',
-		// 操作UI（print:hidden 指定）はPDFに含めない
-		filter: (node) => {
-			if (node instanceof HTMLElement && node.classList && node.classList.contains('print:hidden')) {
-				return false;
+	const prevPaddingBottom = el.style.paddingBottom;
+	el.style.paddingBottom = 'calc(24px + 1.5rem)';
+	try {
+		return await toCanvas(el, {
+			pixelRatio: 2,
+			backgroundColor: '#ffffff',
+			// 操作UI（print:hidden 指定）はPDFに含めない
+			filter: (node) => {
+				if (node instanceof HTMLElement && node.classList && node.classList.contains('print:hidden')) {
+					return false;
+				}
+				return true;
 			}
-			return true;
-		}
-	});
+		});
+	} finally {
+		el.style.paddingBottom = prevPaddingBottom;
+	}
 }
 
 /**
@@ -48,8 +56,8 @@ export async function exportElementToPdf(root: HTMLElement, filename: string): P
 		const img = canvas.toDataURL('image/jpeg', 0.92);
 
 		if (imgH <= contentH) {
-			// 1ページに収まる塊：現在ページに入らなければ改ページ
-			if (pageStarted && cursorY + imgH > margin + contentH) {
+			// 1ページに収まる塊：現在ページに入らなければ改ページ（0.5mmの安全マージン）
+			if (pageStarted && cursorY + imgH > margin + contentH - 0.5) {
 				pdf.addPage();
 				cursorY = margin;
 			}
