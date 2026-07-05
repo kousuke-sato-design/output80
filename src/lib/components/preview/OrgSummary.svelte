@@ -3,6 +3,8 @@
 
 	export let totalUsers = 0;
 	export let deptCount = 0;
+	// PDF生成中は入力欄を通常のテキストとして描画する（入力欄の画像化ズレ対策）
+	export let exporting = false;
 
 	// 表紙情報。企業名はCSVの「企業名」列から自動取得（画面で書き換え可）、実施時期は手入力。
 	let periodText = '';
@@ -26,16 +28,21 @@
 		<div class="min-w-0">
 			<p class="text-xs font-semibold tracking-widest text-primary-700 mb-0.5">新職業性ストレス簡易調査票（80項目版）フィードバック</p>
 			<div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-				<input
-					bind:value={$companyName}
-					placeholder="企業・組織名を入力（印刷に反映）"
-					class="text-2xl font-bold text-gray-900 bg-transparent border-b border-dashed border-gray-300 focus:outline-none focus:border-primary-500 min-w-[16rem] print:border-none"
-				/>
-				<input
-					bind:value={periodText}
-					placeholder="実施時期（例: 2026年7月）"
-					class="text-sm text-gray-600 bg-transparent border-b border-dashed border-gray-300 focus:outline-none focus:border-primary-500 w-44 print:border-none"
-				/>
+				{#if exporting}
+					<span class="text-2xl font-bold text-gray-900 min-h-[2rem]">{$companyName}</span>
+					{#if periodText}<span class="text-sm text-gray-600">{periodText}</span>{/if}
+				{:else}
+					<input
+						bind:value={$companyName}
+						placeholder="企業・組織名を入力（印刷に反映）"
+						class="text-2xl font-bold text-gray-900 bg-transparent border-b border-dashed border-gray-300 focus:outline-none focus:border-primary-500 min-w-[16rem] print:border-none"
+					/>
+					<input
+						bind:value={periodText}
+						placeholder="実施時期（例: 2026年7月）"
+						class="text-sm text-gray-600 bg-transparent border-b border-dashed border-gray-300 focus:outline-none focus:border-primary-500 w-44 print:border-none"
+					/>
+				{/if}
 			</div>
 		</div>
 		<div class="text-right text-xs text-gray-500 leading-relaxed flex-shrink-0">

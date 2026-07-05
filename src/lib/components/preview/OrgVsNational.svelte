@@ -91,11 +91,14 @@
 			<span class="text-xs text-gray-500">回答者 {totalUsers}名 / {deptCount}部署</span>
 		</div>
 		<p class="text-sm text-gray-500 mb-3">上の4領域バランス（レーダー）を数値で示したものです。│＝全国平均。バーが右（緑）に伸びるほど全国より良好、左（赤）に伸びるほど要改善です。</p>
-		<div class="space-y-2">
+		<div class="space-y-2.5">
 			{#each totals as t}
 				<div class="flex items-center gap-3 text-sm">
 					<span class="text-gray-700 w-44 flex-shrink-0 leading-tight">{t.label}</span>
-					<span class="tabular-nums font-semibold text-gray-900 w-10 text-right flex-shrink-0">{fmt(t.org)}</span>
+					<span class="w-14 text-right flex-shrink-0 leading-tight">
+						<span class="block text-xs text-gray-400">当組織</span>
+						<span class="tabular-nums font-semibold text-gray-900">{fmt(t.org)}</span>
+					</span>
 					<div class="relative h-3.5 bg-gray-100 rounded flex-1">
 						{#if t.org !== null && t.national !== null}
 							{#if t.org >= t.national}
@@ -106,12 +109,18 @@
 							<div class="absolute top-0 bottom-0 w-0.5 bg-gray-800" style="left:{scalePct(t.national)}%" title="全国平均"></div>
 						{/if}
 					</div>
-					<span class="tabular-nums text-gray-400 w-10 text-right flex-shrink-0" title="全国平均">{fmt(t.national)}</span>
-					<span class="tabular-nums {colorText[t.color]} w-16 text-right flex-shrink-0 font-medium">{fmtDiff(t.diff)}</span>
+					<span class="w-14 text-right flex-shrink-0 leading-tight">
+						<span class="block text-xs text-gray-400">全国平均</span>
+						<span class="tabular-nums text-gray-600">{fmt(t.national)}</span>
+					</span>
+					<span class="w-20 text-right flex-shrink-0 leading-tight">
+						<span class="block text-xs text-gray-400">全国との差</span>
+						<span class="tabular-nums font-medium {colorText[t.color]}">{fmtDiff(t.diff)}</span>
+					</span>
 				</div>
 			{/each}
 		</div>
-		<p class="text-xs text-gray-400 mt-2">数値＝ 組織全体 ／ 全国平均 ／ 差。得点は最高4点・最低1点で、高い方が良好な状態を示します。</p>
+		<p class="text-xs text-gray-400 mt-2">得点は最高4点・最低1点で、高い方が良好な状態を示します。</p>
 	</div>
 
 	<!-- 2〜6. 公式の5プロフィール章：左＝尺度名と説明、右＝全国平均と比較するバー -->
@@ -129,7 +138,10 @@
 							{/if}
 						</div>
 						<div class="flex items-center gap-3 text-sm">
-							<span class="tabular-nums font-semibold text-gray-900 w-10 text-right flex-shrink-0">{fmt(r.org)}</span>
+							<span class="w-14 text-right flex-shrink-0 leading-tight">
+								<span class="block text-xs text-gray-400">当組織</span>
+								<span class="tabular-nums font-semibold text-gray-900">{fmt(r.org)}</span>
+							</span>
 							<div class="relative h-3.5 bg-gray-100 rounded flex-1 min-w-[80px]">
 								{#if r.org !== null && r.national !== null}
 									{#if r.org >= r.national}
@@ -142,13 +154,19 @@
 									<div class="absolute top-0 bottom-0 left-0 bg-gray-400 rounded-sm" style="width:{scalePct(r.org)}%"></div>
 								{/if}
 							</div>
-							<span class="tabular-nums text-gray-400 w-10 text-right flex-shrink-0" title="全国平均">{fmt(r.national)}</span>
-							<span class="tabular-nums {colorText[r.color]} w-16 text-right flex-shrink-0 font-medium">{fmtDiff(r.diff)}</span>
+							<span class="w-14 text-right flex-shrink-0 leading-tight">
+								<span class="block text-xs text-gray-400">全国平均</span>
+								<span class="tabular-nums text-gray-600">{fmt(r.national)}</span>
+							</span>
+							<span class="w-20 text-right flex-shrink-0 leading-tight">
+								<span class="block text-xs text-gray-400">全国との差</span>
+								<span class="tabular-nums font-medium {colorText[r.color]}">{fmtDiff(r.diff)}</span>
+							</span>
 						</div>
 					</div>
 				{/each}
 			</div>
-			<p class="text-xs text-gray-400 mt-2">数値＝ 組織全体 ／ 全国平均 ／ 差。全国平均は参考値（基準データ N≒1620）です。</p>
+			<p class="text-xs text-gray-400 mt-2">全国平均は参考値（基準データ N≒1620）です。</p>
 		</div>
 	{/each}
 

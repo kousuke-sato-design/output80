@@ -1,18 +1,21 @@
-import html2canvas from 'html2canvas';
+import { toCanvas } from 'html-to-image';
 import { jsPDF } from 'jspdf';
 
+/**
+ * ブロックを画像化する。
+ * html-to-image は SVG foreignObject 経由で「ブラウザ自身の描画」をそのまま画像化するため、
+ * 画面とPDFがずれない（html2canvas は独自再描画のため丸・入力欄がずれる問題があり廃止）。
+ */
 async function capture(el: HTMLElement): Promise<HTMLCanvasElement> {
-	return html2canvas(el, {
-		scale: 2,
+	return toCanvas(el, {
+		pixelRatio: 2,
 		backgroundColor: '#ffffff',
-		useCORS: true,
-		logging: false,
-		windowWidth: el.scrollWidth,
 		// 操作UI（print:hidden 指定）はPDFに含めない
-		onclone: (doc: Document) => {
-			doc.querySelectorAll('[class*="print:hidden"]').forEach((e) => {
-				(e as HTMLElement).style.display = 'none';
-			});
+		filter: (node) => {
+			if (node instanceof HTMLElement && node.classList && node.classList.contains('print:hidden')) {
+				return false;
+			}
+			return true;
 		}
 	});
 }
@@ -39,6 +42,7 @@ export async function exportElementToPdf(root: HTMLElement, filename: string): P
 
 	for (const block of blocks) {
 		const canvas = await capture(block);
+		if (!canvas.width || !canvas.height) continue;
 		const imgW = contentW;
 		const imgH = (canvas.height * imgW) / canvas.width;
 		const img = canvas.toDataURL('image/jpeg', 0.92);
